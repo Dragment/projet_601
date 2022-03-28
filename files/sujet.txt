@@ -1,0 +1,83 @@
+Héro: 
+    attributs: pv, pv max, armure, force, vitesse déplacement, vitesse frappe
+    avoir des artefacts (max 5)
+    pièces du grand-tout (max 3) (effet sur toute les maps):
+        - 1 pièce: ralentir tout les mobs pendant 1 min
+        - 2 pièces: Arrêt de tout les mobs (pas de déplacement ou attaque)
+        - 3 pièces: Comme pièce 2 + perte de 50 % des pv des mobs
+        - Une pièce récupérée si déjà 3 -> disparition pièce
+        - Un seul héro peux activé les pièces en même temps
+        - Si on tape un monstre ennemi -> désactive effet
+    systeme points xp
+    Fonctions: 
+        mort: (pv <= 0) -> reset attribut de base + placement point de départ
+        déplacement: avec les flèches
+        attaque: si il essaie d'aller sur une case avec un monstre ou hero
+        ramasser_artefact: modif stats
+        déposer_artefact: (avec touches de 1 a 5) -> modif stats -> poser artefact sur case à coté du héro
+        activer pièces: touche espace -> activer effet -> supprimer pièces
+
+Artefact:
+    caractérisation: les cinq attributs + nom (chaine longueur variable)
+    peux augmenter ou diminuer les stats
+
+Trésor:
+    - Positionné de base sur la map
+    - Apparaitre aléatoirement toutes les 1 ou 2 minutes
+    effet:
+        - regain pv (pas au dessus du max pv)
+        - gain pièce du grand-tout
+
+Monstre:
+    caractérisation: les cinq attributs + nom (chaine longueur variable)
+    fonction:
+        -mort
+        -attaque (voir si on gère pas ça avec attaque dans héro)
+
+3 applications:
+    - éditeur carte
+    - client:
+        -argument: ip et port TCP
+        -fenetre:
+            -info: affiche les messages: 
+                - attaque monstre affichage nom et caractéristiques
+                - activation pièce par un héro
+                - mort d'un héro
+                ...
+            -carte -> ncurses
+            -attributs:
+                - affiche attribut du héro:
+                    - pv / pvMax
+                    - armure
+                    - force
+                    - vitesse déplacement
+                    - vitesse attaque
+                    - nb pièce
+                    - artefacts 
+    - serveur:
+        - prend en argument le port TCP
+        - prends en argument le répertoire des cartes
+        - éxécute simulation mais n'a PAS d'interface ncurses
+
+
+
+Lancement partie -> création fichier monde.sav -> contient carte du monde
+Quand héro quitte une carte, elle est save dans monde.sav et libérée de la mémoire
+Recharger carte si le héro y revient
+cartes choisies aléatoirement
+actions envoyées aux serveur
+serveur renvoie aux client la map périodiquement
+un thread par monstre
+un thread par héro
+affichage et simulation par un thread dédié
+blocage des monstres par variable de condition
+destruction monstre et héro par annulation retardée (deferred)
+
+
+
+
+
+
+
+
+

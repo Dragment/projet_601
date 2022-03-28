@@ -2,7 +2,7 @@
 #define _ARTEFACT_H
 
 typedef struct artefact{
-    char* name; // Longueure variable demandée dans le sujet
+    char* name; // Longueur variable demandée dans le sujet
     int pv, armure, force, vitesse_attaque, vitesse_deplacement;
 }artefact;
 
