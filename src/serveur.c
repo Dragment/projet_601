@@ -1,12 +1,43 @@
 #include "../head/autoload.h"
 
+int stop = 0; // Arreter le serveur
+
+void handler(int signum) {
+    int r;
+
+    if(signum == SIGINT) {
+        printf("Demande de fin reçue.\n");
+        stop = 1;
+    }
+    
+    do {
+        r = waitpid(-1, NULL, WNOHANG);
+    } while((r != -1) || (errno == EINTR));
+}
+
 int main(int argc, char* argv[]){
+
+    // Positionnement du gestionnaire (Signal ctrl+c)
+    struct sigaction action;
+    sigemptyset(&action.sa_mask);
+    action.sa_flags = 0;
+    action.sa_handler = handler;
+    if(sigaction(SIGCHLD, &action, NULL) == -1) {
+        perror("Erreur lors du placement du gestionnaire ");
+        exit(EXIT_FAILURE);    
+    }
+    if(sigaction(SIGINT, &action, NULL) == -1) {
+        perror("Erreur lors du placement du gestionnaire ");
+        exit(EXIT_FAILURE);    
+    }
     
     // Vérification des arguments
-    if(argc != 2) {
+    if(argc != 3) {
         fprintf(stderr, "Usage : %s port\n", argv[0]);
         fprintf(stderr, "Où :\n");
         fprintf(stderr, "  port : le numéro de port d'écoute du serveur\n");
+        fprintf(stderr, "Où :\n");
+        fprintf(stderr, "  répertoire : le répertoire des maps\n");
         exit(EXIT_FAILURE);
     }
 
@@ -14,7 +45,6 @@ int main(int argc, char* argv[]){
     int fd;
     int sockclient;
     struct sockaddr_in adresse;
-    struct sigaction action;
 
     // Création de la socket
     if((fd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) == -1) {
@@ -41,7 +71,6 @@ int main(int argc, char* argv[]){
     }
 
     // Ajouter accept et traitement
-    int stop = 0;
     while(stop == 0){
 
          // Attente d'une connexion
