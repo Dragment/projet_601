@@ -1,9 +1,18 @@
 #include "../head/autoload.h"
 
-int main(int argv, char* argc[]){
+int main(int argc, char* argv[]){
     
+    // Vérification des arguments
+    if(argc != 2) {
+        fprintf(stderr, "Usage : %s port\n", argv[0]);
+        fprintf(stderr, "Où :\n");
+        fprintf(stderr, "  port : le numéro de port d'écoute du serveur\n");
+        exit(EXIT_FAILURE);
+    }
+
     // Création TCP
     int fd;
+    int sockclient;
     struct sockaddr_in adresse;
     struct sigaction action;
 
@@ -31,10 +40,54 @@ int main(int argv, char* argc[]){
         exit(EXIT_FAILURE);
     }
 
-
-
     // Ajouter accept et traitement
+    int stop = 0;
+    while(stop == 0){
 
+         // Attente d'une connexion
+        if((sockclient = accept(fd, NULL, NULL)) == -1) {
+            if(errno != EINTR) {
+                perror("Erreur lors de la demande de connexion ");
+                exit(EXIT_FAILURE);
+            }
+        }else{ // Sinon si la connexion réussie
+            
+            int pid;
+            if((pid = fork()) == -1) {
+                perror("Erreur lors de la création d'un fils ");
+                exit(EXIT_FAILURE);
+            }
+
+            if(pid == 0){ // fils
+
+                // Fermeture de la socket de connexion
+                if(close(fd) == -1) {
+                    perror("Erreur lors de la fermeture de la socket de connexion ");
+                    exit(EXIT_FAILURE);
+                }
+
+                // Traitement
+                // ...
+
+                // Fermeture de la socket de communication
+                if(close(sockclient) == -1) {
+                    perror("Erreur lors de la fermeture de la socket de communication ");
+                    exit(EXIT_FAILURE);
+                }
+
+                exit(EXIT_SUCCESS);
+
+            }else{ // père
+
+                // Fermeture de la socket de communication
+                if(close(sockclient) == -1) {
+                    perror("Erreur lors de la fermeture de la socket de communication ");
+                    exit(EXIT_FAILURE);
+                }
+
+            }
+        }
+    }
 
 
     // Fermeture de la socket de connexion
