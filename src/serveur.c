@@ -2,6 +2,7 @@
 
 int stop = 0; // Arreter le serveur
 
+// Signal ctrl + c
 void handler(int signum) {
     int r;
 
@@ -40,6 +41,9 @@ int main(int argc, char* argv[]){
         fprintf(stderr, "  répertoire : le répertoire des maps\n");
         exit(EXIT_FAILURE);
     }
+
+    // Créer la structure pour la world map
+    // TODO:
 
     // Création TCP
     int fd;
@@ -96,7 +100,7 @@ int main(int argc, char* argv[]){
                 }
 
                 // Traitement
-                // ...
+                // ... TODO:
 
                 // Fermeture de la socket de communication
                 if(close(sockclient) == -1) {

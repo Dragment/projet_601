@@ -35,7 +35,7 @@ int main(int argc, char *argv[]) {
     }
 
     // Traitement
-    // ...
+    // ... TODO:
 
     // Fermeture de la socket
     if(close(fd) == -1) {
