@@ -1,4 +1,5 @@
 #include "../head/player.h"
+#include "stdlib.h"
 
 player* initNewPlayer(char* nom){
     player* p = (player*)malloc(sizeof(player));
@@ -11,7 +12,9 @@ player* initNewPlayer(char* nom){
     p->nbPiece = 0;
     p->xp = 0;
     p->nom = strcpy(nom);
-    p->listArtefact = {NULL, NULL, NULL, NULL, NULL};
+    for(int i = 0; i < 5; i++){
+        p->listArtefact[i] = NULL;
+    }
 }
 
 void upStats(player* p){

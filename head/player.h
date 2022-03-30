@@ -4,10 +4,9 @@
 #include "artefact.h"
 
 typedef struct player{
-    int pv, pvMax, armure, force, vitesse_attaque, 
-        vitesse_deplacement, nbPiece, xp;
+    int pv, pvMax, armure, force, vitesse_attaque, vitesse_deplacement, nbPiece, xp;
     char* nom;
-    artefact listArtefact[5];
+    artefact* listArtefact[5];
 }player;
 
 player* initNewPlayer(char*);

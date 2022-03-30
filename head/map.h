@@ -14,10 +14,17 @@
 #define MAP_SAND 3
 #define MAP_WATER 4
 
+#include "player.h"
+#include "artefact.h"
+#include "monstre.h"
+
 typedef struct{
     int x, y; // Position de la case sur la map | x => 0 à 39 | y => 0, 19
     int element; // Ce qui est présent sur la case (vide / joueur / ennemi...)
     int background; // Le type de sol (herbre / montage / sable / eau)
+    player* player; // NULL si pas de joueur sur la case
+    monstre* monstre; // NULL si pas de monstre sur la case
+    artefact* artefact; // NULL si pas d'artefact sur la case
 }case_map;
 
 typedef struct{
