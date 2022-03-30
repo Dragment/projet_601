@@ -28,10 +28,34 @@ void ajouter_artefact(completeMap* m, artefact* a){
     }
 }
 
-// TODO: Faire les 3 fonctions
-void supprimer_list_monstre(completeMap* m);
-void supprimer_list_artefact(completeMap* m);
-void supprimer_list_player(completeMap* m);
+void supprimer_list_monstre(completeMap* m){
+    listMonstre* l = m->listMonstreTete;
+    while(l != NULL){
+        listMonstre* suiv = l->suiv;
+        supprimer_monstre(l->monstre);
+        free(l);
+        l = suiv;
+    }
+}
+void supprimer_list_artefact(completeMap* m){
+    listArtefact* l = m->listArtefactTete;
+    while(l != NULL){
+        listArtefact* suiv = l->suiv;
+        supprimer_artefact(l->artefact);
+        free(l);
+        l = suiv;
+    }
+}
+
+void supprimer_list_player(completeMap* m){
+    listPlayer* l = m->listPlayerTete;
+    while(l != NULL){
+        listPlayer* suiv = l->suiv;
+        supprimer_player(l->player);
+        free(l);
+        l = suiv;
+    }
+}
 
 completeMap* generer_complete_map(int x, int y, char* repertoire){
     completeMap* m = malloc(sizeof(completeMap));
@@ -88,14 +112,16 @@ completeMap* generer_complete_map(int x, int y, char* repertoire){
             }
         }
     }
-
-
 }
 
-void delete_complete_map(completeMap* m);
-// TODO: quand la création sera bien finie
-// Tout parcourir pour supprimer monstre / artefact / player
-// free(m);
+void delete_complete_map(completeMap* m){
+    supprimer_list_monstre(m);
+    supprimer_list_artefact(m);
+    supprimer_list_player(m);
+
+    supprimer_map(m->map);
+    free(m);
+}
 
 worldMapList init_world_map(char* repertoire){
     // Générer la map 0, 0

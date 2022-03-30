@@ -2,8 +2,8 @@
 #define _WORLDMAP_H
 
 #include "map.h"
-#include "monstre.h"
-#include "artefact.h"
+//#include "monstre.h"
+//#include "artefact.h"
 
 // Listes Chainées
 typedef struct{

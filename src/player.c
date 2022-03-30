@@ -17,6 +17,10 @@ player* initNewPlayer(char* nom){
     }
 }
 
+void supprimer_player(player* p){
+    free(p);
+}
+
 void upStats(player* p){
     int nb;
     srand(time(NULL));
