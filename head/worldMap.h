@@ -2,6 +2,8 @@
 #define _WORLDMAP_H
 
 #include "map.h"
+#include "monstre.h"
+#include "artefact.h"
 
 // Listes Chainées
 typedef struct{
@@ -52,6 +54,13 @@ typedef struct worldMapList{
 completeMap* generer_complete_map(int x, int y, char* repertoire);
 // Detruire complete map
 void delete_complete_map(completeMap* m);
+// Ajout dans les listes
+void ajouter_monstre(completeMap* m, monstre* monstre);
+void ajouter_artefact(completeMap* m, artefact* a);
+// Supprimer les listes
+void supprimer_list_monstre(completeMap* m);
+void supprimer_list_artefact(completeMap* m);
+void supprimer_list_player(completeMap* m);
 
 
 // Initialise la worldMap et génère la map 0, 0

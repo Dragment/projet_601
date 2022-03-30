@@ -2,6 +2,36 @@
 #include "stdlib.h"
 #include <dirent.h>
 
+void ajouter_monstre(completeMap* m, monstre* monstre){
+    listMonstre* l = malloc(sizeof(listMonstre));
+    l->monstre = monstre;
+    l->suiv = NULL;
+    if(m->listMonstreTete == NULL){
+        m->listMonstreTete = l;
+        m->listMonstreQueue = l;
+    }else{
+        m->listMonstreQueue->suiv = l;
+        m->listMonstreQueue = l;
+    }
+}
+
+void ajouter_artefact(completeMap* m, artefact* a){
+    listArtefact* l = malloc(sizeof(listArtefact));
+    l->artefact = a;
+    l->suiv = NULL;
+    if(m->listArtefactTete == NULL){
+        m->listArtefactTete = l;
+        m->listArtefactQueue = l;
+    }else{
+        m->listArtefactQueue->suiv = l;
+        m->listArtefactQueue = l;
+    }
+}
+
+// TODO: Faire les 3 fonctions
+void supprimer_list_monstre(completeMap* m);
+void supprimer_list_artefact(completeMap* m);
+void supprimer_list_player(completeMap* m);
 
 completeMap* generer_complete_map(int x, int y, char* repertoire){
     completeMap* m = malloc(sizeof(completeMap));
@@ -38,19 +68,34 @@ completeMap* generer_complete_map(int x, int y, char* repertoire){
     srand(time(NULL));
     int nbMap = rand() % nbMapDispo;
 
+    // Charger map depuis fichier
     m->map = initialiser_map_vide();
     charger_map(m->map, nbMap);
 
     // Remplire les listes artefact et monstre (si on créer la map pas de héro présent)
-    // TODO:
     // Pour chaque case de la map
-    // si monstre ou artefact le créer et le placer dans la case et dans la liste
+    case_map* c;
+    for(int y = 0; y < 20; y++){
+        for(int x = 0; x < 40; x++){
+            c = &(m->map->list_case[x][y]);
+            // si monstre ou artefact le créer et le placer dans la case et dans la liste
+            if(c->element == MAP_MONSTER){
+                c->monstre = creer_monstre();
+                ajouter_monstre(m, c->monstre);
+            }else if(c->element == MAP_ARTIFACT){
+                c->artefact = creer_artefact();
+                ajouter_artefact(m, c->artefact);
+            }
+        }
+    }
 
 
 }
 
 void delete_complete_map(completeMap* m);
-// TODO:
+// TODO: quand la création sera bien finie
+// Tout parcourir pour supprimer monstre / artefact / player
+// free(m);
 
 worldMapList init_world_map(char* repertoire){
     // Générer la map 0, 0
