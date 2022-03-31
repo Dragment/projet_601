@@ -8,17 +8,17 @@
 // Listes Chainées
 typedef struct{
     monstre* monstre;
-    listMonstre* suiv;
+    struct listMonstre* suiv;
 }listMonstre;
 
 typedef struct{
     artefact* artefact;
-    listArtefact* suiv;
+    struct listArtefact* suiv;
 }listArtefact;
 
 typedef struct{
     player* player;
-    listPlayer* suiv;
+    struct listPlayer* suiv;
 }listPlayer;
 
 
@@ -38,7 +38,7 @@ typedef struct completeMap{
     listPlayer* listPlayerQueue;
 
     // Partie pour la liste chainée de worldMapList
-    completeMap* suiv;
+    struct completeMap* suiv;
 
 }completeMap;
 

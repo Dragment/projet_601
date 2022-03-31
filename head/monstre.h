@@ -10,7 +10,6 @@ typedef struct monstre{
 monstre* creer_monstre();
 void supprimer_monstre(monstre* m);
 
-
 #define nbMonstreDifferents 2 // Nombre de variété de monstre différents
 monstre gobelin = {"Gobelin", 10, 2, 3, 4, 5, 10};
 monstre orc = {"Orc", 20, 5, 8, 2, 2, 25};

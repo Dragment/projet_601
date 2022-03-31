@@ -1,6 +1,8 @@
 #include "monstre.h"
 #include <stdlib.h>
 
+
+
 monstre* creer_monstre(){
     monstre* m = malloc(sizeof(monstre));
     srand(time(NULL));

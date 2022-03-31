@@ -1,22 +1,20 @@
-OBJS	= src/editeur.o src/ncurses.o src/map.o
-SOURCE	= src/editeur.c src/ncurses.c src/map.c
-HEADER	= head/ncurses.h head/map.h
-OUT	= editeur
 CC	 = gcc
-FLAGS	 = -c -Wall -O3 -Werror
+FLAGS = -Wall -Werror
 LFLAGS	 = -lncursesw
 
-all: $(OBJS)
-	$(CC) -g $(OBJS) -o $(OUT) $(LFLAGS)
+all: editeur
+
+editeur: bin/editeur.o bin/ncurses.o bin/map.o
+	$(CC) -o editeur bin/editeur.o bin/ncurses.o bin/map.o $(LFLAGS)
 
 bin/editeur.o: src/editeur.c
-	$(CC) $(FLAGS) src/editeur.c
+	$(CC) -o bin/editeur.o -c src/editeur.c $(FLAGS)
 
 bin/ncurses.o: src/ncurses.c
-	$(CC) $(FLAGS) src/ncurses.c 
+	$(CC) -o bin/ncurses.o -c src/ncurses.c $(FLAGS)
 
 bin/map.o: src/map.c
-	$(CC) $(FLAGS) src/map.c 
+	$(CC) -o bin/map.o -c src/map.c $(FLAGS)
 
 clean:
-	rm -f $(OBJS) $(OUT)
+	rm -rf bin/*.o
