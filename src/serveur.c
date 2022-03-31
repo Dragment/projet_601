@@ -43,7 +43,7 @@ int main(int argc, char* argv[]){
     }
 
     // Créer la structure pour la world map
-    // TODO:
+    worldMapList worldMap = init_world_map(argv[2]);
 
     // Création TCP
     int fd;

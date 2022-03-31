@@ -70,8 +70,4 @@ void delete_world_map(worldMapList m);
 // Récupérer completeMap x, y ou la créer si elle n'existe pas encore
 completeMap* get_or_create_complete_map(worldMapList m ,int x, int y);
 
-
-
-
-
 #endif

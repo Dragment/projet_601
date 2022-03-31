@@ -11,3 +11,4 @@
 
 #include "ncurses.h"
 #include "map.h"
+#include "worldMap.h"
