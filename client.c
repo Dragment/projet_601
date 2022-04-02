@@ -1,7 +1,7 @@
 #include "autoload.h"
 
 int main(int argc, char *argv[]) {
-    int fd, n;
+    int fd;
     struct sockaddr_in adresse;
     
     // Vérification des arguments

@@ -11,5 +11,6 @@ typedef struct player{
 
 player* initNewPlayer(char*);
 void upStats(player*);
+void supprimer_player(player*);
 
 #endif

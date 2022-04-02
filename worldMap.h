@@ -2,21 +2,21 @@
 #define _WORLDMAP_H
 
 #include "map.h"
-//#include "monstre.h"
-//#include "artefact.h"
+#include "monstre.h"
+#include "artefact.h"
 
 // Listes Chainées
-typedef struct{
+typedef struct listMonstre{
     monstre* monstre;
     struct listMonstre* suiv;
 }listMonstre;
 
-typedef struct{
+typedef struct listArtefact{
     artefact* artefact;
     struct listArtefact* suiv;
 }listArtefact;
 
-typedef struct{
+typedef struct listPlayer{
     player* player;
     struct listPlayer* suiv;
 }listPlayer;

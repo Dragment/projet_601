@@ -1,4 +1,4 @@
-#include "../head/autoload.h"
+#include "autoload.h"
 
 #define DEBUT_X = 1;
 #define DEBUT_Y = 13;

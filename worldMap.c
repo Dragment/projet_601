@@ -1,6 +1,8 @@
 #include "worldMap.h"
-#include "stdlib.h"
+#include <stdlib.h>
 #include <dirent.h>
+#include <string.h>
+#include <time.h>
 
 void ajouter_monstre(completeMap* m, monstre* monstre){
     listMonstre* l = malloc(sizeof(listMonstre));
@@ -112,6 +114,7 @@ completeMap* generer_complete_map(int x, int y, char* repertoire){
             }
         }
     }
+    return(m);
 }
 
 void delete_complete_map(completeMap* m){
@@ -127,9 +130,11 @@ worldMapList init_world_map(char* repertoire){
     // Générer la map 0, 0
     completeMap* cm = generer_complete_map(0, 0, repertoire);
     worldMapList m;
-    m.repertoireCarte = strcpy(repertoire);
+    m.repertoireCarte = NULL; // éviter erreur ‘m.repertoireCarte’ is used uninitialized in this function
+    strcpy(m.repertoireCarte, repertoire);
     m.tete = cm;
     m.queue = cm;
+    return(m);
 }
 
 void delete_world_map(worldMapList m){

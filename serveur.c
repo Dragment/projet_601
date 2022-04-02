@@ -1,4 +1,4 @@
-#include "../head/autoload.h"
+#include "autoload.h"
 
 int stop = 0; // Arreter le serveur
 
@@ -44,6 +44,9 @@ int main(int argc, char* argv[]){
 
     // Créer la structure pour la world map
     worldMapList worldMap = init_world_map(argv[2]);
+
+    // FIXME:
+    delete_world_map(worldMap);
 
     // Création TCP
     int fd;

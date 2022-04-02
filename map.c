@@ -1,4 +1,4 @@
-#include "../head/autoload.h"
+#include "autoload.h"
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/stat.h>

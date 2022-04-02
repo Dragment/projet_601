@@ -1,20 +1,63 @@
+OBJS	= editeur.o map.o ncurses.o player.o artefact.o monstre.o serveur.o worldMap.o client.o
+OUT	= editeur, serveur, client
+
+OBJS0	= editeur.o map.o ncurses.o player.o artefact.o monstre.o
+SOURCE0	= editeur.c map.c ncurses.c player.c artefact.c monstre.c
+HEADER0	= map.h ncurses.h player.h artefact.h monstre.h
+OUT0	= editeur
+
+OBJS1	= serveur.o map.o player.o artefact.o monstre.o worldMap.o
+SOURCE1	= serveur.c map.c player.c artefact.c monstre.c worldMap.c
+HEADER1	= map.h player.h artefact.h monstre.h worldMap.h
+OUT1	= serveur
+
+OBJS2	= client.o
+SOURCE2	= client.c
+HEADER2	= 
+OUT2	= client
+
 CC	 = gcc
-FLAGS = -Wall -Werror
+FLAGS	 = -g -c -Wall -Werror
 LFLAGS	 = -lncursesw
 
-all: editeur
+all: editeur serveur client
 
-editeur: bin/editeur.o bin/ncurses.o bin/map.o
-	$(CC) -o editeur bin/editeur.o bin/ncurses.o bin/map.o $(LFLAGS)
+editeur: $(OBJS0) $(LFLAGS)
+	$(CC) -g $(OBJS0) -o $(OUT0) $(LFLAGS)
 
-bin/editeur.o: src/editeur.c
-	$(CC) -o bin/editeur.o -c src/editeur.c $(FLAGS)
+serveur: $(OBJS1) $(LFLAGS)
+	$(CC) -g $(OBJS1) -o $(OUT1)
 
-bin/ncurses.o: src/ncurses.c
-	$(CC) -o bin/ncurses.o -c src/ncurses.c $(FLAGS)
+client: $(OBJS2) $(LFLAGS)
+	$(CC) -g $(OBJS2) -o $(OUT2)
 
-bin/map.o: src/map.c
-	$(CC) -o bin/map.o -c src/map.c $(FLAGS)
+editeur.o: editeur.c
+	$(CC) $(FLAGS) editeur.c 
+
+map.o: map.c
+	$(CC) $(FLAGS) map.c 
+
+ncurses.o: ncurses.c
+	$(CC) $(FLAGS) ncurses.c 
+
+player.o: player.c
+	$(CC) $(FLAGS) player.c 
+
+artefact.o: artefact.c
+	$(CC) $(FLAGS) artefact.c 
+
+monstre.o: monstre.c
+	$(CC) $(FLAGS) monstre.c 
+
+serveur.o: serveur.c
+	$(CC) $(FLAGS) serveur.c 
+
+worldMap.o: worldMap.c
+	$(CC) $(FLAGS) worldMap.c 
+
+client.o: client.c
+	$(CC) $(FLAGS) client.c 
+
 
 clean:
-	rm -rf bin/*.o
+	rm -f $(OBJS) $(OUT)

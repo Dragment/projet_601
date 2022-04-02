@@ -1,5 +1,7 @@
-#include "../head/player.h"
-#include "stdlib.h"
+#include "player.h"
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
 
 player* initNewPlayer(char* nom){
     player* p = (player*)malloc(sizeof(player));
@@ -11,10 +13,11 @@ player* initNewPlayer(char* nom){
     p->vitesse_deplacement = 1;
     p->nbPiece = 0;
     p->xp = 0;
-    p->nom = strcpy(nom);
+    strcpy(p->nom, nom);
     for(int i = 0; i < 5; i++){
         p->listArtefact[i] = NULL;
     }
+    return(p);
 }
 
 void supprimer_player(player* p){
