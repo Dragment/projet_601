@@ -3,6 +3,7 @@
 #include <dirent.h>
 #include <string.h>
 #include <time.h>
+#include <stdio.h>
 
 void ajouter_monstre(completeMap* m, monstre* monstre){
     listMonstre* l = malloc(sizeof(listMonstre));
@@ -77,43 +78,54 @@ completeMap* generer_complete_map(int x, int y, char* repertoire){
     // Charger une map random dans la liste des cartes
 
     // Trouver le nombre de map dispo
-    int nbMapDispo = 0;
+    // Enlever 2 pour dossier . et ./
+    int nbMapDispo = -2;
     DIR* dirp;
     struct dirent* entry;
-    dirp = opendir("path"); /* There should be error handling after this */
+    dirp = opendir(repertoire);
+    // fprintf(stderr, "CompleteMap: Go compter nb maps dans %s\n", repertoire);
     while ((entry = readdir(dirp)) != NULL) {
-        //if (entry->d_type == DT_REG) { /* If the entry is a regular file */
-
-            nbMapDispo++; // FIXME: Verifier que le nb de fichier est bon
-
-        //}
+            nbMapDispo++;
     }
+    // fprintf(stderr, "CompleteMap: Compter nb maps OK => %d\n", nbMapDispo);
     closedir(dirp);
 
     // Choisir un nb aléatoire pour la map
     srand(time(NULL));
     int nbMap = rand() % nbMapDispo;
 
+    // fprintf(stderr, "CompleteMap: Map choisie %d\n", nbMap);
+
     // Charger map depuis fichier
     m->map = initialiser_map_vide();
+    // fprintf(stderr, "CompleteMap: Go charger map\n");
     charger_map(m->map, nbMap);
+    // fprintf(stderr, "CompleteMap: Chargement map ok \n");
 
     // Remplire les listes artefact et monstre (si on créer la map pas de héro présent)
     // Pour chaque case de la map
+    // fprintf(stderr, "CompleteMap: charger monstre et artefact\n");
     case_map* c;
     for(int y = 0; y < 20; y++){
         for(int x = 0; x < 40; x++){
             c = &(m->map->list_case[x][y]);
             // si monstre ou artefact le créer et le placer dans la case et dans la liste
             if(c->element == MAP_MONSTER){
+                // fprintf(stderr, "CompleteMap: monstre\n");
                 c->monstre = creer_monstre();
+                // fprintf(stderr, "   CompleteMap: creer monstre ok\n");
                 ajouter_monstre(m, c->monstre);
+                // fprintf(stderr, "   CompleteMap: ajout monstre ok\n");
             }else if(c->element == MAP_ARTIFACT){
+                // fprintf(stderr, "CompleteMap: artefact\n");
                 c->artefact = creer_artefact();
+                // fprintf(stderr, "   CompleteMap: creer artefact ok\n");
                 ajouter_artefact(m, c->artefact);
+                // fprintf(stderr, "   CompleteMap: ajouter artefact ok\n");
             }
         }
     }
+    // fprintf(stderr, "CompleteMap: chargement monstre artefact ok\n");
     return(m);
 }
 
@@ -128,9 +140,11 @@ void delete_complete_map(completeMap* m){
 
 worldMapList init_world_map(char* repertoire){
     // Générer la map 0, 0
+    // fprintf(stderr, "Init_world_map: Go init map\n");
     completeMap* cm = generer_complete_map(0, 0, repertoire);
+    // fprintf(stderr, "Init_world_map: Complete map OK\n");
     worldMapList m;
-    m.repertoireCarte = NULL; // éviter erreur ‘m.repertoireCarte’ is used uninitialized in this function
+    m.repertoireCarte = malloc(sizeof(char)*strlen(repertoire));
     strcpy(m.repertoireCarte, repertoire);
     m.tete = cm;
     m.queue = cm;
@@ -147,6 +161,7 @@ void delete_world_map(worldMapList m){
     }
     m.tete = NULL;
     m.queue = NULL;
+    free(m.repertoireCarte);
 }
 
 completeMap* get_or_create_complete_map(worldMapList m, int x, int y){

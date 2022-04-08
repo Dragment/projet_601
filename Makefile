@@ -13,13 +13,14 @@ OUT1	= serveur
 
 OBJS2	= client.o
 SOURCE2	= client.c
-HEADER2	= 
+HEADER2	=
 OUT2	= client
 
 CC	 = gcc
 FLAGS	 = -g -c -Wall -Werror
 LFLAGS	 = -lncursesw
 
+#all: editeur serveur client cleanOBJ
 all: editeur serveur client
 
 editeur: $(OBJS0) $(LFLAGS)
@@ -61,3 +62,6 @@ client.o: client.c
 
 clean:
 	rm -f $(OBJS) $(OUT)
+
+cleanOBJ:
+	rm -f $(OBJS)

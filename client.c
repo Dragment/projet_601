@@ -36,6 +36,20 @@ int main(int argc, char *argv[]) {
 
     // Traitement
     // ... TODO:
+    char* n = "test";
+    if(write(fd, n, sizeof(char)*4)== -1) {
+        perror("Erreur lors de l'envoi de la valeur ");
+        exit(EXIT_FAILURE);
+    }
+    printf("Client : valeur envoyée %s\n", n);
+
+    // Lecture de la réponse du serveur
+    char n2[2];
+    if(read(fd, n2, sizeof(char)*2) == -1) {
+        perror("Erreur lors de la réception de la valeur ");
+        exit(EXIT_FAILURE);
+    }
+    printf("Client : valeur reçue %s.\n", n2);
     
 
     // Fermeture de la socket
@@ -44,5 +58,7 @@ int main(int argc, char *argv[]) {
         exit(EXIT_FAILURE);
     }
 
+
+    printf("Fermeture du client\n");
     return EXIT_SUCCESS;
 }

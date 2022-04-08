@@ -43,10 +43,9 @@ int main(int argc, char* argv[]){
     }
 
     // Créer la structure pour la world map
+    fprintf(stderr, "World map dans %s\n", argv[2]);
     worldMapList worldMap = init_world_map(argv[2]);
-
-    // FIXME:
-    delete_world_map(worldMap);
+    fprintf(stderr, "map OK\n");
 
     // Création TCP
     int fd;
@@ -104,6 +103,25 @@ int main(int argc, char* argv[]){
 
                 // Traitement
                 // ... TODO:
+                
+                // Lecture de la valeur
+                char n[4];
+                if(read(sockclient, n, sizeof(char)*4) == -1) {
+                    perror("Erreur lors de la lecture de la valeur ");
+                    exit(EXIT_FAILURE);
+                }
+                printf("Serveur - fils : valeur reçue '%s'.\n", n);
+                
+                // Envoi de la réponse
+                char* n2 = "ok";
+                if(write(sockclient, n2, sizeof(char)*2) == -1) {
+                    perror("Erreur lors de l'envoi de la valeur ");
+                    exit(EXIT_FAILURE);
+                }
+                printf("Serveur - fils : valeur envoyée '%s'.\n", n2);
+
+
+
 
                 // Fermeture de la socket de communication
                 if(close(sockclient) == -1) {
@@ -125,11 +143,16 @@ int main(int argc, char* argv[]){
         }
     }
 
-
     // Fermeture de la socket de connexion
     if(close(fd) == -1) {
         perror("Erreur lors de la fermeture de la socket de connexion ");
         exit(EXIT_FAILURE);
     }
+
+    // FIXME: Confirmer qu'on fait bien le delete ici
+    delete_world_map(worldMap);
+
+    printf("Fermeture du serveur\n");
+    return EXIT_SUCCESS;
 }
 

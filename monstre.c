@@ -13,6 +13,7 @@ monstre* creer_monstre(){
     srand(time(NULL));
     int nb = rand() % nbMonstreDifferents;
     monstre* ref = listMonstreExistant[nb];
+    m->name = malloc(sizeof(char)*strlen(ref->name));
     strcpy(m->name, ref->name);
     m->pv = ref->pv;
     m->armure = ref->armure;
@@ -24,5 +25,6 @@ monstre* creer_monstre(){
 }
 
 void supprimer_monstre(monstre* m){
+    free(m->name);
     free(m);
 }

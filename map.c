@@ -89,7 +89,7 @@ int charger_map(map* map, int numMap){
         perror("Erreur placement lseek: ");
         exit(EXIT_FAILURE);
     }
-    fprintf(stderr, "Position: %d\n", pos);
+    //fprintf(stderr, "Position: %d\n", pos);
 
     // Boucle sur chaque case de la map
     for(int i = 0; i<40; i++){

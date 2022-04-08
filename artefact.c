@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
+#include <stdio.h>
 
 #define nbArtefactDifferents 2
 artefact artefact_vie = {"Artefact de Vie", 3, 0, 0, 0, 0};
@@ -12,8 +13,12 @@ artefact* creer_artefact(){
     artefact* a = malloc(sizeof(artefact));
     srand(time(NULL));
     int nb = rand() % nbArtefactDifferents;
+    // fprintf(stderr, "       Artefact: nbArtefact = %d\n", nb);
     artefact* ref = listArtefactExistant[nb];
+    // fprintf(stderr, "       Artefact: strcpy / len(ref->name) = %ld\n", strlen(ref->name));
+    a->name = malloc(sizeof(char)*strlen(ref->name));
     strcpy(a->name, ref->name);
+    // fprintf(stderr, "       Artefact: strcpy ok\n");
     a->pv = ref->pv;
     a->armure = ref->armure;
     a->force = ref->force;
@@ -23,5 +28,6 @@ artefact* creer_artefact(){
 }
 
 void supprimer_artefact(artefact* a){
+    free(a->name);
     free(a);
 }
