@@ -1,8 +1,6 @@
 #ifndef _MONSTRE_H
 #define _MONSTRE_H
 
-#include "worldMap.h"
-
 typedef struct monstre{
     char* name; // Longueur variable demandée dans le sujet
     int pv, armure, force, vitesse_attaque, vitesse_deplacement;

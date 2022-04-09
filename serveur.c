@@ -117,15 +117,20 @@ int main(int argc, char* argv[]){
                     exit(EXIT_FAILURE);
                 }
 
-                player* p = initNewPlayer(buffer);
+                // Trouver ou placer le player et le placer
+                int spawn_x, spawn_y;
+                trouver_lieu_spawn(worldMap, &spawn_x, &spawn_y);
+                player* p = initNewPlayer(buffer, spawn_x, spawn_y);
                 printf("Connexion de %s\n", p->nom);
+                // Ajouter le joueur a la liste des joueurs de la map 0, 0
                 ajouter_joueur(worldMap.tete, p);
-
+                // Ajouter le player a la case (la place lui est réservée dans trouver_lieu_spawn)
+                worldMap.tete->map->list_case[spawn_x][spawn_y].player = p;
 
                 // Déclaration variables
                 int player_map_x = 0;
                 int player_map_y = 0;
-                int playerId = 0;
+                int playerId = -1; // Id temporaire, ce sera ensuite le pid
 
                 //Boucle de traitement
                 requete requeteClient;
@@ -145,7 +150,6 @@ int main(int argc, char* argv[]){
                         reponse_map_et_player rmp;
                         rmp.m = m;
                         rmp.p = tempP;
-                        //if(write(sockclient, &m, sizeof(map)) == -1) {
                         if(write(sockclient, &rmp, sizeof(reponse_map_et_player)) == -1) {
                             perror("Erreur lors de l'envoi de la première map ");
                             exit(EXIT_FAILURE);
@@ -171,6 +175,16 @@ int main(int argc, char* argv[]){
                         default:
                             
                             break;
+                        }
+                        // Réponse
+                        map m = *(get_or_create_complete_map(worldMap, player_map_x, player_map_y)->map);
+                        player tempP = *p;
+                        reponse_map_et_player rmp;
+                        rmp.m = m;
+                        rmp.p = tempP;
+                        if(write(sockclient, &rmp, sizeof(reponse_map_et_player)) == -1) {
+                            perror("Erreur lors de l'envoi de la première map ");
+                            exit(EXIT_FAILURE);
                         }
                     }
                 }

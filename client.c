@@ -47,6 +47,8 @@ char getCharacter(char* item){
         return 'M';
     }else if(strcmp(item, "artefact") == 0){
         return 'A';
+    }else if(strcmp(item, "player") == 0){
+        return 'P';
     }else{
         return ' ';
     }
@@ -85,6 +87,8 @@ char getItemInt(char* item){
         return MAP_MONSTER;
     }else if(strcmp(item, "artefact") == 0){
         return MAP_ARTIFACT;
+    }else if(strcmp(item, "player") == 0){
+        return MAP_PLAYER;
     }else{
         return MAP_VIDE;
     }
@@ -132,6 +136,9 @@ char* intToStringItem(int val){
     case(MAP_MONSTER):
         return "monstre";
         break;
+    case(MAP_PLAYER):
+        return "player";
+        break;
     default:
         return "VIDE";
         break;
@@ -148,6 +155,12 @@ void dessinner_map(WINDOW* fenetre, map* map){
             placer(fenetre, x+1, y+13, bg, item);
         }
     }
+}
+
+void afficher_attributs(WINDOW* attributs, player p, char* nomJoueur){ // TODO: afficher artefacts
+    wclear(attributs);
+    wprintw(attributs, "Joueur :\n%s\n\nPV : %d/%d\nArmure : %d\nForce : %d\nVit atq : %d\nVit dep : %d\n\nXP : %d/100\nPieces : %d", nomJoueur, p.pv, p.pvMax, p.armure, p.force, p.vitesse_attaque, p.vitesse_deplacement, p.xp, p.nbPieces);
+    wrefresh(attributs);
 }
 
 int lancerJeu(int socket, char* nomJoueur){
@@ -221,15 +234,9 @@ int lancerJeu(int socket, char* nomJoueur){
     wrefresh(attributs);
 
     // Ajout des valeurs dans attributs
-    //initialiser_attributs(attributs); //TODO: Initialiser affichage attributs
     player p = repmp.p;
-    if(p.armure == 1){
-        p.armure = 1;
-    }
     // TODO: Remplacer par les stats artefact
-    //wprintw(attributs, "Joueur : %s\n\nPV : %d/%d\nArmure : %d\nForce : %d\nVitesse d'attaque : %d\nVitesse de déplacement : %d\n\nXP : %d/100\nPièces possédées : %d\n\nStats d'artéfacts : %s", p.nom, p.pv, p.pvMax, p.armure, p.force, p.vitesse_attaque, p.vitesse_deplacement, p.xp, p.nbPieces, statsArtefact1, statsArtefact2, statsArtefact3, statsArtefact4, statsArtefact5);
-    wprintw(attributs, "Joueur :\n%s\n\nPV : %d/%d\nArmure : %d\nForce : %d\nVit atq : %d\nVit dep : %d\n\nXP : %d/100\nPieces : %d", nomJoueur, p.pv, p.pvMax, p.armure, p.force, p.vitesse_attaque, p.vitesse_deplacement, p.xp, p.nbPieces);
-    wrefresh(attributs);
+    afficher_attributs(attributs, p, nomJoueur);
 
     // Traitement des actions
     int ch;
@@ -281,16 +288,15 @@ int lancerJeu(int socket, char* nomJoueur){
             exit(EXIT_FAILURE);
         }
         //Réponse
-        int rep;
-        // Lecture de la réponse du serveur
-        if(read(socket, &rep, sizeof(int)) == -1) {
-            perror("Erreur reception TCP ");
+        reponse_map_et_player repmp;
+        if(read(socket, &repmp, sizeof(reponse_map_et_player)) == -1) {
+            perror("Erreur lors de la réception de la première map ");
             exit(EXIT_FAILURE);
         }
-        if(rep == 1){ //TODO: Vérifier si on laisse ce retour
-            wprintw(info, "Action impossible\n");
-            wrefresh(info);
-        }
+        *m = repmp.m;
+        dessinner_map(carte, m);
+        player p = repmp.p;
+        afficher_attributs(attributs, p, nomJoueur);
     }
 
     // Quitter ncurses
