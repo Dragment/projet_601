@@ -3,9 +3,11 @@
 
 // Liste des commandes
 #define PREMIERE_DEMANDE_CARTE 1
+#define MOVE 2
 
 typedef struct requete{
     int map_x, map_y, playerId, commande;
+    char option[255];
 }requete;
 
 #endif

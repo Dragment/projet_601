@@ -86,7 +86,6 @@ int main(int argc, char* argv[]){
                 exit(EXIT_FAILURE);
             }
         }else{ // Sinon si la connexion réussie
-            
             int pid;
             if((pid = fork()) == -1) {
                 perror("Erreur lors de la création d'un fils ");

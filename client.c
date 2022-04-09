@@ -1,5 +1,21 @@
 #include "autoload.h"
 
+int stop = 0; // Arreter le serveur
+
+// Signal ctrl + c
+void handler(int signum) {
+    int r;
+
+    if(signum == SIGINT) {
+        // printf("Demande de fin reçue.\n");
+        stop = 1;
+    }
+    
+    do {
+        r = waitpid(-1, NULL, WNOHANG);
+    } while((r != -1) || (errno == EINTR));
+}
+
 int verifDimTerminal(int xMin, int yMin){
     if(xMin <= COLS && yMin <= LINES){
         return 1;
@@ -206,7 +222,8 @@ int lancerJeu(int socket){
     //initialiser_attributs(attributs); //TODO: Initialiser affichage attributs
 
     // Traitement des actions
-    int ch, x, y;
+    int ch;
+    // int x, y;
     // char* background = ""; 
     // char* item = "";
 
@@ -221,30 +238,47 @@ int lancerJeu(int socket){
     dessinner_map(carte, m);
 
     // Tant que q n'est pas apppuyé, on attends une saisie
-    while((ch = getch()) != 'q') {
-        // Si c'est un click souris
-        if(ch==KEY_MOUSE){
-            if(souris_getpos(&x, &y) == OK){
-                // // Dans la fenetre outils
-                // if(y>=13 && y<=35 && x>=45 && x<=60){
-                //     // Affichage dans la fenetre d'info
-                //     choisirOutils(outils, x, y, &background, &item);
-                //     wprintw(info, "Background: %s %s %s\n", background, " Item: ", item);
-                //     wrefresh(info);
-                // // Dans le fenetre map
-                // }else if(y>=13 && y<=32 && x>=1 && x<=40){
-                //     wprintw(info, "Placer Background: %s Item: %s en %d, %d\n", background, item, x, y);
-                //     wrefresh(info);
-                //     placer(carte, x, y, background, item);
-                //     // Mettre à jour map
-                //     majMap(map, x, y, background, item);
-                // // Sinon
-                // }else{
-                //     wprintw(info, "Pos x: %d / Pos y: %d => %d, %d\n", x, y);
-                //     wrefresh(info);
-                // }
-                wprintw(info, "Pos x: %d / Pos y: %d => %d, %d\n", x, y);
+    // while(((ch = getch()) != 'q') && stop == 0) {
+    while((ch = getch()) && stop == 0) {
+        // Les déplacements + espace
+        if(ch == KEY_UP || ch == KEY_DOWN || ch == KEY_RIGHT || ch == KEY_LEFT || ch == ' '){
+            requete.map_x = map_x;
+            requete.map_y = map_y;
+            // PlayerId bouge pas
+            requete.commande = MOVE;
+
+            if(ch == KEY_UP){
+                // Flèche haut
+                requete.option[0] = 'U';
+            }else if(ch == KEY_DOWN){
+                // Flèche bas
+                requete.option[0] = 'D';
+            }else if(ch == KEY_RIGHT){
+                // Flèche droite
+                requete.option[0] = 'R';
+            }else if(ch == KEY_LEFT){
+                // Flèche gauche
+                requete.option[0] = 'L';
+            }else if(ch == ' '){
+                // Espace
+                requete.option[0] = 'S';
             }
+        }
+        //Envoie requete
+        if(write(socket, &requete, sizeof(requete))== -1) {
+            perror("Erreur lors de l'envoi TCP ");
+            exit(EXIT_FAILURE);
+        }
+        //Réponse
+        int rep;
+        // Lecture de la réponse du serveur
+        if(read(socket, &rep, sizeof(int)) == -1) {
+            perror("Erreur reception TCP ");
+            exit(EXIT_FAILURE);
+        }
+        if(rep == 1){ //TODO: Vérifier si on laisse ce retour
+            wprintw(info, "Action impossible\n");
+            wrefresh(info);
         }
     }
 
@@ -261,6 +295,20 @@ int lancerJeu(int socket){
 int main(int argc, char *argv[]) {
     int fd;
     struct sockaddr_in adresse;
+
+    // Positionnement du gestionnaire (Signal ctrl+c)
+    struct sigaction action;
+    sigemptyset(&action.sa_mask);
+    action.sa_flags = 0;
+    action.sa_handler = handler;
+    if(sigaction(SIGCHLD, &action, NULL) == -1) {
+        perror("Erreur lors du placement du gestionnaire ");
+        exit(EXIT_FAILURE);    
+    }
+    if(sigaction(SIGINT, &action, NULL) == -1) {
+        perror("Erreur lors du placement du gestionnaire ");
+        exit(EXIT_FAILURE);    
+    }
     
     // Vérification des arguments
     if(argc != 3) {
