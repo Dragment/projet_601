@@ -4,6 +4,7 @@
 #include <string.h>
 #include <time.h>
 #include <stdio.h>
+#include <unistd.h>
 
 void ajouter_joueur(completeMap* m, player* p){
     listPlayer* l = malloc(sizeof(listPlayer));
@@ -228,7 +229,7 @@ void playerMove(completeMap* m, player* p, char mv){    // TODO : Rajouter des "
             && m->map->list_case[p->posX][p->posY-1].element != MAP_MONSTER && m->map->list_case[p->posX][p->posY-1].element != MAP_OBSTACLE){
                 m->map->list_case[p->posX][p->posY].element = MAP_VIDE;
                 // TODO : Vérifier si item au sol (interdire si set artefacts rempli ou trop de pièces du grand tout et obtenir item au sol avant de se déplacer)
-                m->map->list_case[p->posX][p->posY+1].element = MAP_PLAYER;
+                m->map->list_case[p->posX][p->posY-1].element = MAP_PLAYER;
                 p->posY--;
             }
             break;

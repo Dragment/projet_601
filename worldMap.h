@@ -75,4 +75,8 @@ void delete_world_map(worldMapList m);
 completeMap* get_or_create_complete_map(worldMapList m ,int x, int y);
 void trouver_lieu_spawn(worldMapList m, int* ret_x, int* ret_y);
 
+// Mouvement
+void playerMove(completeMap* m, player* p, char mv);
+void monsterMove(completeMap* m, monstre* monster);
+
 #endif

@@ -143,7 +143,7 @@ int main(int argc, char* argv[]){
                     // Premier envoie de carte
                     if(requeteClient.commande == PREMIERE_DEMANDE_CARTE){
                         playerId = requeteClient.playerId;
-                        printf("Envoie de la première map à %d\n", playerId);
+                        // printf("Envoie de la première map à %d\n", playerId);
                         // marche pas si on fait juste => map* map = get_or_create_complete_map(worldMap, player_map_x, player_map_y)->map;
                         map m = *(get_or_create_complete_map(worldMap, player_map_x, player_map_y)->map);
                         player tempP = *p;
@@ -158,16 +158,16 @@ int main(int argc, char* argv[]){
                         switch (requeteClient.option)
                         {
                         case 'U':
-                            /* code */ // TODO: déplacer player
+                            playerMove(get_or_create_complete_map(worldMap, player_map_x, player_map_y), p, 'U');
                             break;
                         case 'D':
-                            /* code */ // TODO: déplacer player
+                            playerMove(get_or_create_complete_map(worldMap, player_map_x, player_map_y), p, 'D');
                             break;
                         case 'R':
-                            /* code */ // TODO: déplacer player
+                            playerMove(get_or_create_complete_map(worldMap, player_map_x, player_map_y), p, 'R');
                             break;
                         case 'L':
-                            /* code */ // TODO: déplacer player
+                            playerMove(get_or_create_complete_map(worldMap, player_map_x, player_map_y), p, 'L');
                             break;
                         case ' ':
                             /* code */ // TODO: Pièce du grand tout
