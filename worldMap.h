@@ -25,7 +25,7 @@ typedef struct listPlayer{
 // Map complete avec monstre et artefact
 typedef struct completeMap{
     map* map;
-    int x, y; // Coordonné par raport à la map de spawn
+    int x, y; // Coordonnées par rapport à la map globale de spawn
 
     // Listes chainées des entités
     listMonstre* listMonstreTete;
@@ -57,6 +57,7 @@ void delete_complete_map(completeMap* m);
 // Ajout dans les listes
 void ajouter_monstre(completeMap* m, monstre* monstre);
 void ajouter_artefact(completeMap* m, artefact* a);
+void ajouter_joueur(completeMap* m, player* p);
 // Supprimer les listes
 void supprimer_list_monstre(completeMap* m);
 void supprimer_list_artefact(completeMap* m);

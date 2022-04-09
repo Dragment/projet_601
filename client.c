@@ -204,6 +204,9 @@ int lancerJeu(int socket){
 
     // Ajout des valeurs dans attributs
     //initialiser_attributs(attributs); //TODO: Initialiser affichage attributs
+    wprintw(attributs, "Joueur : %s\n\nPV : %d/%d\nArmure : %d\nForce : %d\nVitesse d'attaque : %d\nVitesse de déplacement : %d\n\nXP : %d/100\nPièces possédées : %d\n\nStats d'artéfacts : %s", 
+    /* pseudo, pv, pvMax, armure, force, vitesse d'attaque, vitesse de deplacement,
+    xp, nbPieces, statsArtefact1, statsArtefact2, statsArtefact3, statsArtefact4, statsArtefact5*/);
 
     // Traitement des actions
     int ch, x, y;
@@ -261,6 +264,7 @@ int lancerJeu(int socket){
 int main(int argc, char *argv[]) {
     int fd;
     struct sockaddr_in adresse;
+    char* buffer;
     
     // Vérification des arguments
     if(argc != 3) {
@@ -289,6 +293,26 @@ int main(int argc, char *argv[]) {
     // Connexion au serveur
     if(connect(fd, (struct sockaddr*)&adresse, sizeof(adresse)) == -1) {
         perror("Erreur lors de la connexion ");
+        exit(EXIT_FAILURE);
+    }
+
+    // Choix du nom du joueur
+    char name[21] = "";
+    while (strlen(name) > 0 && strlen(name) < 21){ // \0 n'est pas pris en compte par strlen() donc on vérifie seulement que le nom ait une taille de 20 caractères
+        printf("Rentrez le nom du joueur : ");
+        scanf("%20s", name);
+        printf("\n");
+    }
+
+    // Envoi du nom du joueur au serveur
+    if(write(socket, &adresse, sizeof(adresse))== -1) {
+        perror("Erreur lors de l'envoi du nom du joueur ");
+        exit(EXIT_FAILURE);
+    }
+
+    // Lecture de la réponse du serveur
+    if(read(socket, buffer, sizeof(buffer)) == -1) {
+        perror("Erreur lors de la réception de la confirmation du choix du nom du joueur ");
         exit(EXIT_FAILURE);
     }
 
