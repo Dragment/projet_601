@@ -177,6 +177,8 @@ char getCharacter(char* item){
         return 'M';
     }else if(strcmp(item, "artefact") == 0){
         return 'A';
+    }else if(strcmp(item, "player") == 0){
+        return 'P';
     }else{
         return ' ';
     }
@@ -348,10 +350,6 @@ int creer_carte(){
     init_pair(102, COLOR_WHITE, COLOR_BLUE);
     init_pair(103, COLOR_WHITE, COLOR_RED);
     init_pair(104, COLOR_WHITE, COLOR_BLACK);
-    init_pair(105, COLOR_BLACK, COLOR_GREEN);
-    init_pair(106, COLOR_BLACK, COLOR_YELLOW);
-    init_pair(107, COLOR_BLACK, COLOR_BLUE);
-    init_pair(108, COLOR_BLACK, COLOR_RED);
 
     // Remplir la map d'herbe
     remplir_herbe(carte);
