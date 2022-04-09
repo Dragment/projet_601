@@ -18,7 +18,7 @@ player* initNewPlayer(char* nom){
     for(int i = 0; i < 5; i++){
         p->listArtefact[i] = NULL;
     }
-    return(p);
+    return p;
 }
 
 void supprimer_player(player* p){

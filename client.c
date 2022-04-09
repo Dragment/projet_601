@@ -150,7 +150,7 @@ void dessinner_map(WINDOW* fenetre, map* map){
     }
 }
 
-int lancerJeu(int socket){
+int lancerJeu(int socket, char* nomJoueur){
     
     //Initialiser variables
     int map_x = 0; // Les identifiants de la map actuelle (coordonnées worldMap)
@@ -173,7 +173,9 @@ int lancerJeu(int socket){
     }
 
     // Lecture de la réponse du serveur
-    if(read(socket, m, sizeof(map)) == -1) {
+    //if(read(socket, m, sizeof(map)) == -1) {
+    reponse_map_et_player repmp;
+    if(read(socket, &repmp, sizeof(reponse_map_et_player)) == -1) {
         perror("Erreur lors de la réception de la première map ");
         exit(EXIT_FAILURE);
     }
@@ -220,7 +222,14 @@ int lancerJeu(int socket){
 
     // Ajout des valeurs dans attributs
     //initialiser_attributs(attributs); //TODO: Initialiser affichage attributs
-    wprintw(attributs, "Joueur : %s\n\nPV : %d/%d\nArmure : %d\nForce : %d\nVitesse d'attaque : %d\nVitesse de déplacement : %d\n\nXP : %d/100\nPièces possédées : %d\n\nStats d'artéfacts : %s", /* pseudo, pv, pvMax, armure, force, vitesse d'attaque, vitesse de deplacement, xp, nbPieces, statsArtefact1, statsArtefact2, statsArtefact3, statsArtefact4, statsArtefact5*/);
+    player p = repmp.p;
+    if(p.armure == 1){
+        p.armure = 1;
+    }
+    // TODO: Remplacer par les stats artefact
+    //wprintw(attributs, "Joueur : %s\n\nPV : %d/%d\nArmure : %d\nForce : %d\nVitesse d'attaque : %d\nVitesse de déplacement : %d\n\nXP : %d/100\nPièces possédées : %d\n\nStats d'artéfacts : %s", p.nom, p.pv, p.pvMax, p.armure, p.force, p.vitesse_attaque, p.vitesse_deplacement, p.xp, p.nbPieces, statsArtefact1, statsArtefact2, statsArtefact3, statsArtefact4, statsArtefact5);
+    wprintw(attributs, "Joueur :\n%s\n\nPV : %d/%d\nArmure : %d\nForce : %d\nVit atq : %d\nVit dep : %d\n\nXP : %d/100\nPieces : %d", nomJoueur, p.pv, p.pvMax, p.armure, p.force, p.vitesse_attaque, p.vitesse_deplacement, p.xp, p.nbPieces);
+    wrefresh(attributs);
 
     // Traitement des actions
     int ch;
@@ -236,6 +245,7 @@ int lancerJeu(int socket){
     init_pair(104, COLOR_WHITE, COLOR_BLACK);
 
     // Afficher la map chargée
+    *m = repmp.m;
     dessinner_map(carte, m);
 
     // Tant que q n'est pas apppuyé, on attends une saisie
@@ -310,7 +320,6 @@ int main(int argc, char *argv[]) {
         perror("Erreur lors du placement du gestionnaire ");
         exit(EXIT_FAILURE);    
     }
-    char* buffer;
     
     // Vérification des arguments
     if(argc != 3) {
@@ -344,26 +353,38 @@ int main(int argc, char *argv[]) {
 
     // Choix du nom du joueur
     char name[21] = "";
-    while (strlen(name) > 0 && strlen(name) < 21){ // \0 n'est pas pris en compte par strlen() donc on vérifie seulement que le nom ait une taille de 20 caractères
-        printf("Rentrez le nom du joueur : ");
+    printf("Rentrez le nom du joueur : ");
+    scanf("%20s", name);
+    printf("\n");
+    while (strlen(name) <= 0 && strlen(name) > 21){ // \0 n'est pas pris en compte par strlen() donc on vérifie seulement que le nom ait une taille de 20 caractères
+        printf("Nom incorect, réessayez : ");
         scanf("%20s", name);
         printf("\n");
     }
 
     // Envoi du nom du joueur au serveur
-    if(write(fd, buffer, sizeof(char)*21)== -1) {
+    if(write(fd, name, sizeof(char)*21)== -1) {
         perror("Erreur lors de l'envoi du nom du joueur ");
         exit(EXIT_FAILURE);
     }
 
+    int repPseudo;
     // Lecture de la réponse du serveur
-    if(read(fd, buffer, sizeof(char)*21) == -1) {
+    if(read(fd, &repPseudo, sizeof(int)) == -1) {
         perror("Erreur lors de la réception de la confirmation du choix du nom du joueur ");
+        exit(EXIT_FAILURE);
+    }
+    if(repPseudo != 0){
+        fprintf(stderr, "Erreur validation nom\n");
+        if(close(fd) == -1) {
+            perror("Erreur lors de la fermeture de la socket ");
+            exit(EXIT_FAILURE);
+        }
         exit(EXIT_FAILURE);
     }
 
     // Traitement
-    lancerJeu(fd);
+    lancerJeu(fd, name);
 
     // Fermeture de la socket
     if(close(fd) == -1) {

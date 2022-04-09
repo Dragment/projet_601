@@ -103,7 +103,7 @@ int main(int argc, char* argv[]){
                 // Partie nom du joueur //
 
                 char buffer[21];
-                char buffer2[3];
+                int repPseudo = 0;
 
                 // Lecture de la requête du client
                 if(read(sockclient, buffer, sizeof(char)*21) == -1) {
@@ -112,12 +112,13 @@ int main(int argc, char* argv[]){
                 }
 
                 // Envoi de la validation du nom
-                if(write(sockclient, buffer2, sizeof(char)*3)== -1) {
+                if(write(sockclient, &repPseudo, sizeof(int))== -1) {
                     perror("Erreur lors de l'envoi du nom du joueur ");
                     exit(EXIT_FAILURE);
                 }
 
                 player* p = initNewPlayer(buffer);
+                printf("Connexion de %s\n", p->nom);
                 ajouter_joueur(worldMap.tete, p);
 
 
@@ -139,8 +140,13 @@ int main(int argc, char* argv[]){
                         playerId = requeteClient.playerId;
                         printf("Envoie de la première map à %d\n", playerId);
                         // marche pas si on fait juste => map* map = get_or_create_complete_map(worldMap, player_map_x, player_map_y)->map;
-                        map map = *(get_or_create_complete_map(worldMap, player_map_x, player_map_y)->map);
-                        if(write(sockclient, &map, sizeof(map)) == -1) {
+                        map m = *(get_or_create_complete_map(worldMap, player_map_x, player_map_y)->map);
+                        player tempP = *p;
+                        reponse_map_et_player rmp;
+                        rmp.m = m;
+                        rmp.p = tempP;
+                        //if(write(sockclient, &m, sizeof(map)) == -1) {
+                        if(write(sockclient, &rmp, sizeof(reponse_map_et_player)) == -1) {
                             perror("Erreur lors de l'envoi de la première map ");
                             exit(EXIT_FAILURE);
                         }
