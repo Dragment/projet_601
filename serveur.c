@@ -118,14 +118,13 @@ int main(int argc, char* argv[]){
                 char buffer2[3];
 
                 // Lecture de la requête du client
-                if(read(socket, buffer, sizeof(char)*21) == -1) {
+                if(read(sockclient, buffer, sizeof(char)*21) == -1) {
                     perror("Erreur lors de la réception de la confirmation du choix du nom du joueur ");
                     exit(EXIT_FAILURE);
                 }
 
-
                 // Envoi de la validation du nom
-                if(write(socket, buffer2, sizeof(char)*3)== -1) {
+                if(write(sockclient, buffer2, sizeof(char)*3)== -1) {
                     perror("Erreur lors de l'envoi du nom du joueur ");
                     exit(EXIT_FAILURE);
                 }
