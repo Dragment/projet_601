@@ -4,6 +4,7 @@
 #include <string.h>
 #include <time.h>
 #include <stdio.h>
+#include <unistd.h>
 
 void ajouter_joueur(completeMap* m, player* p){
     listPlayer* l = malloc(sizeof(listPlayer));
@@ -219,7 +220,7 @@ void trouver_lieu_spawn(worldMapList m, int* ret_x, int* ret_y){
     *ret_y = testy;
 }
 
-/*void playerMove(completeMap* m, player* p, char mv){    // TODO : Rajouter des "if" pour vérifier si au bord de la map et que la prochaine case est dispo
+void playerMove(completeMap* m, player* p, char mv){    // TODO : Rajouter des "if" pour vérifier si au bord de la map et que la prochaine case est dispo
     pthread_mutex_lock(&m->mutex);    // TODO : Rajouter vérification "if ... != ..."
     switch(mv){
         // TODO : Penser à modifier les coordonnées du Joueur (posX et posY)
@@ -228,7 +229,7 @@ void trouver_lieu_spawn(worldMapList m, int* ret_x, int* ret_y){
             if (m->map->list_case[p->posY+1][p->posX].background != MAP_WATER && m->map->list_case[p->posY+1][p->posX].element != MAP_PLAYER
                 && m->map->list_case[p->posY+1][p->posX].element != MAP_MONSTER && m->map->list_case[p->posY+1][p->posX].element != MAP_OBSTACLE){
                 m->map->list_case[p->posY][p->posX].element = MAP_VIDE;
-                // TODO : Vérifier si item au sol (interdire si set artefacts rempli ou trop de pièces du grand tout et obtenir item au sol avant de se déplacer)
+                // TODO: Vérifier si item au sol (interdire si set artefacts rempli ou trop de pièces du grand tout et obtenir item au sol avant de se déplacer)
                 m->map->list_case[p->posY+1][p->posX].element = MAP_PLAYER;
             }
             break;
@@ -323,4 +324,5 @@ void monsterMove(completeMap* m, monstre* monster){
         // Temps d'attente avant le prochain mouvement
         int sleeping = (int) 5 - 0.05*monster->vitesse_deplacement;
         sleep(sleeping + 1);
-}*/
+    }
+}

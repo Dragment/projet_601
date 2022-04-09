@@ -158,16 +158,17 @@ int main(int argc, char* argv[]){
                         switch (requeteClient.option)
                         {
                         case 'U':
-                            /* code */ // TODO: déplacer player
+                            fprintf(stderr, "Deplacement U\n");
+                            playerMove(get_or_create_complete_map(worldMap, player_map_x, player_map_y), p, 'U');
                             break;
                         case 'D':
-                            /* code */ // TODO: déplacer player
+                            playerMove(get_or_create_complete_map(worldMap, player_map_x, player_map_y), p, 'D');
                             break;
                         case 'R':
-                            /* code */ // TODO: déplacer player
+                            playerMove(get_or_create_complete_map(worldMap, player_map_x, player_map_y), p, 'R');
                             break;
                         case 'L':
-                            /* code */ // TODO: déplacer player
+                            playerMove(get_or_create_complete_map(worldMap, player_map_x, player_map_y), p, 'L');
                             break;
                         case ' ':
                             /* code */ // TODO: Pièce du grand tout
