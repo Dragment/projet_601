@@ -114,6 +114,8 @@ int main(int argc, char* argv[]){
                 int player_map_x = requete.map_x;
                 int player_map_y = requete.map_y;
                 int playerId = requete.playerId;
+
+                // TODO: Créer player et le placer sur la map
                 
                 printf("Envoie de la première map à %d\n", playerId);
                 // Envoi de la première map
