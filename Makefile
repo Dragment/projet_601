@@ -19,6 +19,7 @@ OUT2	= client
 CC	 = gcc
 FLAGS	 = -g -c -Wall -Werror
 LFLAGS	 = -lncursesw
+LFLAGS2  = -lpthread
 
 #all: editeur serveur client cleanOBJ
 all: editeur serveur client

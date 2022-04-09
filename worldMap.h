@@ -1,10 +1,10 @@
 #ifndef _WORLDMAP_H
 #define _WORLDMAP_H
 
+#include <pthread.h>
 #include "map.h"
 #include "monstre.h"
 #include "artefact.h"
-#include "pthread.h"
 
 // Listes Chainées
 typedef struct listMonstre{
@@ -73,5 +73,6 @@ worldMapList init_world_map(char* repertoire);
 void delete_world_map(worldMapList m);
 // Récupérer completeMap x, y ou la créer si elle n'existe pas encore
 completeMap* get_or_create_complete_map(worldMapList m ,int x, int y);
+void trouver_lieu_spawn(worldMapList m, int* ret_x, int* ret_y);
 
 #endif

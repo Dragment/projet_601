@@ -126,7 +126,7 @@ completeMap* generer_complete_map(int x, int y, char* repertoire){
             // si monstre ou artefact le créer et le placer dans la case et dans la liste
             if(c->element == MAP_MONSTER){
                 // fprintf(stderr, "CompleteMap: monstre\n");
-                c->monstre = creer_monstre();
+                c->monstre = creer_monstre(x, y); // TODO: On a modif la fonction, vérifier que ça marche toujours
                 // fprintf(stderr, "   CompleteMap: creer monstre ok\n");
                 ajouter_monstre(m, c->monstre);
                 // fprintf(stderr, "   CompleteMap: ajout monstre ok\n");
@@ -201,7 +201,25 @@ completeMap* get_or_create_complete_map(worldMapList m, int x, int y){
     return ret;
 }
 
-void playerMove(completeMap* m, player* p, char mv){    // TODO : Rajouter des "if" pour vérifier si au bord de la map et que la prochaine case est dispo
+void trouver_lieu_spawn(worldMapList m, int* ret_x, int* ret_y){
+    completeMap* cm = get_or_create_complete_map(m, 0, 0);
+    srand(time(NULL));
+    int testx, testy;
+    testx = rand() %40;
+    testy = rand() %20;
+    pthread_mutex_lock(&(cm->mutex));
+    while(cm->map->list_case[testx][testy].element != MAP_VIDE || cm->map->list_case[testx][testy].background == MAP_WATER){
+        testx = rand() %40;
+        testy = rand() %20;
+    }
+    // On réserve la place pour le player
+    cm->map->list_case[testx][testy].element = MAP_PLAYER;
+    pthread_mutex_unlock(&cm->mutex);
+    *ret_x = testx;
+    *ret_y = testy;
+}
+
+/*void playerMove(completeMap* m, player* p, char mv){    // TODO : Rajouter des "if" pour vérifier si au bord de la map et que la prochaine case est dispo
     pthread_mutex_lock(&m->mutex);    // TODO : Rajouter vérification "if ... != ..."
     switch(mv){
         // TODO : Penser à modifier les coordonnées du Joueur (posX et posY)
@@ -312,4 +330,4 @@ void monsterMove(completeMap* m, monstre* monster){
         // Temps d'attente avant le prochain mouvement
         int sleeping = (int) 5 - 0.05*monster->vitesse_deplacement;
         sleep(sleeping + 1);
-}
+}*/
