@@ -104,24 +104,25 @@ int main(int argc, char* argv[]){
                 // Traitement
                 // ... TODO:
                 
-                // Lecture de la valeur
-                char n[4];
-                if(read(sockclient, n, sizeof(char)*4) == -1) {
-                    perror("Erreur lors de la lecture de la valeur ");
+                // La première requete sera toujours la même
+                requete requete;
+                if(read(sockclient, &requete, sizeof(requete)) == -1) {
+                    perror("Erreur lors de la demande de récupération première map client ");
                     exit(EXIT_FAILURE);
                 }
-                printf("Serveur - fils : valeur reçue '%s'.\n", n);
+
+                int player_map_x = requete.map_x;
+                int player_map_y = requete.map_y;
+                int playerId = requete.playerId;
                 
-                // Envoi de la réponse
-                char* n2 = "ok";
-                if(write(sockclient, n2, sizeof(char)*2) == -1) {
-                    perror("Erreur lors de l'envoi de la valeur ");
+                printf("Envoie de la première map à %d\n", playerId);
+                // Envoi de la première map
+                // marche pas si on fait juste => map* map = get_or_create_complete_map(worldMap, player_map_x, player_map_y)->map;
+                map map = *(get_or_create_complete_map(worldMap, player_map_x, player_map_y)->map);
+                if(write(sockclient, &map, sizeof(map)) == -1) {
+                    perror("Erreur lors de l'envoi de la première map ");
                     exit(EXIT_FAILURE);
                 }
-                printf("Serveur - fils : valeur envoyée '%s'.\n", n2);
-
-
-
 
                 // Fermeture de la socket de communication
                 if(close(sockclient) == -1) {

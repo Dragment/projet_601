@@ -8,12 +8,12 @@ OUT0	= editeur
 
 OBJS1	= serveur.o map.o player.o artefact.o monstre.o worldMap.o
 SOURCE1	= serveur.c map.c player.c artefact.c monstre.c worldMap.c
-HEADER1	= map.h player.h artefact.h monstre.h worldMap.h
+HEADER1	= map.h player.h artefact.h monstre.h worldMap.h requete.h
 OUT1	= serveur
 
-OBJS2	= client.o
-SOURCE2	= client.c
-HEADER2	=
+OBJS2	= client.o map.o ncurses.o player.o artefact.o monstre.o
+SOURCE2	= client.c map.c ncurses.c player.c artefact.c monstre.c
+HEADER2	= requete.h map.h ncurses.h player.h artefact.h monstre.h
 OUT2	= client
 
 CC	 = gcc
@@ -30,7 +30,7 @@ serveur: $(OBJS1) $(LFLAGS)
 	$(CC) -g $(OBJS1) -o $(OUT1)
 
 client: $(OBJS2) $(LFLAGS)
-	$(CC) -g $(OBJS2) -o $(OUT2)
+	$(CC) -g $(OBJS2) -o $(OUT2) $(LFLAGS)
 
 editeur.o: editeur.c
 	$(CC) $(FLAGS) editeur.c 

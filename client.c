@@ -1,5 +1,263 @@
 #include "autoload.h"
 
+int verifDimTerminal(int xMin, int yMin){
+    if(xMin <= COLS && yMin <= LINES){
+        return 1;
+    }else{
+        return 0;
+    }
+}
+
+int getBackgroundColor(char* background){
+    if(strcmp(background, "herbe") == 0){
+        return 100;
+    }else if(strcmp(background, "sable") == 0){
+        return 101;
+    }else if(strcmp(background, "eau") == 0){
+        return 102;
+    }else if(strcmp(background, "montagne") == 0){
+        return 103;
+    }else{
+        return 104;
+    }
+}
+
+char getCharacter(char* item){
+    if(strcmp(item, "obstacle") == 0){
+        return 'X';
+    }else if(strcmp(item, "tresor") == 0){
+        return '$';
+    }else if(strcmp(item, "monstre") == 0){
+        return 'M';
+    }else if(strcmp(item, "artefact") == 0){
+        return 'A';
+    }else{
+        return ' ';
+    }
+}
+
+void placer(WINDOW* fenetre, int x, int y, char* background, char* item){
+    int color = getBackgroundColor(background);
+    char character = getCharacter(item);
+    
+    wattron(fenetre, COLOR_PAIR(color));
+    mvwprintw(fenetre, y-13, x-1, "%c", character);
+    wattroff(fenetre, COLOR_PAIR(color));
+    wrefresh(fenetre);
+}
+
+int getBackgroundInt(char* background){
+    if(strcmp(background, "herbe") == 0){
+        return MAP_GRASS;
+    }else if(strcmp(background, "sable") == 0){
+        return MAP_SAND;
+    }else if(strcmp(background, "eau") == 0){
+        return MAP_WATER;
+    }else if(strcmp(background, "montagne") == 0){
+        return MAP_MONTAGNE;
+    }else{
+        return MAP_VIDE;
+    }
+}
+
+char getItemInt(char* item){
+    if(strcmp(item, "obstacle") == 0){
+        return MAP_OBSTACLE;
+    }else if(strcmp(item, "tresor") == 0){
+        return MAP_TRESOR;
+    }else if(strcmp(item, "monstre") == 0){
+        return MAP_MONSTER;
+    }else if(strcmp(item, "artefact") == 0){
+        return MAP_ARTIFACT;
+    }else{
+        return MAP_VIDE;
+    }
+}
+
+void majMap(map* m, int x, int y, char* background, char* item){
+    case_map* c = &(m->list_case[x-1][y-13]);
+    c->background = getBackgroundInt(background);
+    c->element = getItemInt(item);
+}
+
+char* intToStringBackground(int val){
+    switch(val)
+    {
+    case (MAP_GRASS):
+        return "herbe";
+        break;
+    case (MAP_MONTAGNE):
+        return "montagne";
+        break;
+    case (MAP_SAND):
+        return "sable";
+        break;
+    case (MAP_WATER):
+        return "eau";
+        break;
+    default:
+        return "VIDE";
+        break;
+    }
+}
+
+char* intToStringItem(int val){
+    switch(val)
+    {
+    case(MAP_ARTIFACT):
+        return "artefact";
+        break;
+    case(MAP_TRESOR):
+        return "tresor";
+        break;
+    case(MAP_OBSTACLE):
+        return "obstacle";
+        break;
+    case(MAP_MONSTER):
+        return "monstre";
+        break;
+    default:
+        return "VIDE";
+        break;
+    }
+}
+
+void dessinner_map(WINDOW* fenetre, map* map){
+    char* bg;
+    char* item;
+    for(int x=0; x<40; x++){
+        for(int y=0; y<20; y++){
+            bg = intToStringBackground(map->list_case[x][y].background);
+            item = intToStringItem(map->list_case[x][y].element);
+            placer(fenetre, x+1, y+13, bg, item);
+        }
+    }
+}
+
+int lancerJeu(int socket){
+    
+    //Initialiser variables
+    int map_x = 0; // Les identifiants de la map actuelle (coordonnées worldMap)
+    int map_y = 0;
+    int playerId = getpid(); // L'identifiant du player sera le pid du processus client
+    
+    map* m = initialiser_map_vide();
+    // map* m;
+
+    // Demander map au serveur
+    requete requete;
+    requete.map_x = map_x;
+    requete.map_y = map_y;
+    requete.playerId = playerId;
+    requete.commande = PREMIERE_DEMANDE_CARTE;
+
+    if(write(socket, &requete, sizeof(requete))== -1) {
+        perror("Erreur lors de l'envoi de demande de première carte ");
+        exit(EXIT_FAILURE);
+    }
+
+    // Lecture de la réponse du serveur
+    if(read(socket, m, sizeof(map)) == -1) {
+        perror("Erreur lors de la réception de la première map ");
+        exit(EXIT_FAILURE);
+    }
+
+    // Initialisation ncurses
+    ncurses_init();
+
+    // Vérifier les dimensions du terminal
+    if(verifDimTerminal(62, 36) == 0){
+        ncurses_stop();
+        fprintf(stderr, "Le terminal est trop petit pour lancer le jeu !\n");
+        return EXIT_FAILURE;
+    }
+
+    // Fenetre 1
+    WINDOW* cadreInfo = newwin(12, 62, 0, 0);
+    box(cadreInfo, 0, 0); // Ajouter des bords à la fenetre
+    mvwprintw(cadreInfo, 0, 1, "Informations");
+    wrefresh(cadreInfo);
+    // Sous fenetre 1
+    WINDOW* info = derwin(cadreInfo, 10, 60, 1, 1);
+    scrollok(info, TRUE);
+    wrefresh(info);
+
+    // Fenetre 2
+    WINDOW* cadreCarte = newwin(22, 42, 12, 0);
+    box(cadreCarte, 0, 0);
+    mvwprintw(cadreCarte, 0, 1, "Carte");
+    wrefresh(cadreCarte);
+    // Sous fenetre 2
+    WINDOW* carte = derwin(cadreCarte, 20, 40, 1, 1);
+    //wprintw(fenetre2, "Fenetre");
+    wrefresh(carte);
+
+    // Fenetre 3
+    WINDOW* cadreAttributs = newwin(22, 18, 12, 44);
+    box(cadreAttributs, 0, 0);
+    mvwprintw(cadreAttributs, 0, 1, "Attributs");
+    wrefresh(cadreAttributs);
+    // Sous fenetre 3
+    WINDOW* attributs = derwin(cadreAttributs, 20, 16, 1, 1);
+    //wprintw(fenetre2, "Fenetre");
+    wrefresh(attributs);
+
+    // Ajout des valeurs dans attributs
+    //initialiser_attributs(attributs); //TODO: Initialiser affichage attributs
+
+    // Traitement des actions
+    int ch, x, y;
+    // char* background = ""; 
+    // char* item = "";
+
+    //Definide des couleurs à placer dans la map
+    init_pair(100, COLOR_WHITE, COLOR_GREEN);
+    init_pair(101, COLOR_WHITE, COLOR_YELLOW);
+    init_pair(102, COLOR_WHITE, COLOR_BLUE);
+    init_pair(103, COLOR_WHITE, COLOR_RED);
+    init_pair(104, COLOR_WHITE, COLOR_BLACK);
+
+    // Afficher la map chargée
+    dessinner_map(carte, m);
+
+    // Tant que q n'est pas apppuyé, on attends une saisie
+    while((ch = getch()) != 'q') {
+        // Si c'est un click souris
+        if(ch==KEY_MOUSE){
+            if(souris_getpos(&x, &y) == OK){
+                // // Dans la fenetre outils
+                // if(y>=13 && y<=35 && x>=45 && x<=60){
+                //     // Affichage dans la fenetre d'info
+                //     choisirOutils(outils, x, y, &background, &item);
+                //     wprintw(info, "Background: %s %s %s\n", background, " Item: ", item);
+                //     wrefresh(info);
+                // // Dans le fenetre map
+                // }else if(y>=13 && y<=32 && x>=1 && x<=40){
+                //     wprintw(info, "Placer Background: %s Item: %s en %d, %d\n", background, item, x, y);
+                //     wrefresh(info);
+                //     placer(carte, x, y, background, item);
+                //     // Mettre à jour map
+                //     majMap(map, x, y, background, item);
+                // // Sinon
+                // }else{
+                //     wprintw(info, "Pos x: %d / Pos y: %d => %d, %d\n", x, y);
+                //     wrefresh(info);
+                // }
+                wprintw(info, "Pos x: %d / Pos y: %d => %d, %d\n", x, y);
+            }
+        }
+    }
+
+    // Quitter ncurses
+    ncurses_stop();
+
+    // Libérer map
+    supprimer_map(m);
+
+    return EXIT_SUCCESS;
+}
+
+
 int main(int argc, char *argv[]) {
     int fd;
     struct sockaddr_in adresse;
@@ -35,22 +293,7 @@ int main(int argc, char *argv[]) {
     }
 
     // Traitement
-    // ... TODO:
-    char* n = "test";
-    if(write(fd, n, sizeof(char)*4)== -1) {
-        perror("Erreur lors de l'envoi de la valeur ");
-        exit(EXIT_FAILURE);
-    }
-    printf("Client : valeur envoyée %s\n", n);
-
-    // Lecture de la réponse du serveur
-    char n2[2];
-    if(read(fd, n2, sizeof(char)*2) == -1) {
-        perror("Erreur lors de la réception de la valeur ");
-        exit(EXIT_FAILURE);
-    }
-    printf("Client : valeur reçue %s.\n", n2);
-    
+    lancerJeu(fd);
 
     // Fermeture de la socket
     if(close(fd) == -1) {

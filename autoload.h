@@ -12,3 +12,4 @@
 #include "ncurses.h"
 #include "map.h"
 #include "worldMap.h"
+#include "requete.h"
