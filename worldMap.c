@@ -205,6 +205,7 @@ void playerMove(completeMap* m, player* p, char mv){    // TODO : Rajouter des "
     pthread_mutex_lock(&m->mutex);    // TODO : Rajouter vérification "if ... != ..."
     switch(mv){
         // TODO : Penser à modifier les coordonnées du Joueur (posX et posY)
+        // TODO : si case avec joueur ou monstre => attaque
         case 'U':
             if (m->map->list_case[p->posY+1][p->posX].background != MAP_WATER && m->map->list_case[p->posY+1][p->posX].element != MAP_PLAYER
                 && m->map->list_case[p->posY+1][p->posX].element != MAP_MONSTER && m->map->list_case[p->posY+1][p->posX].element != MAP_OBSTACLE){
@@ -253,8 +254,11 @@ void monsterMove(completeMap* m, monstre* monster){
         pthread_mutex_lock(&m->mutex);
 
         switch(cas){
-            case 0:     // UP => Il faut que le monstre soit à y = 38 au maximum (sinon il sort du tableau de positions)
-                if (monster->posY + 1 < 39 && m->map->list_case[monster->posY+1][monster->posX].background != MAP_WATER
+            // TODO : si case avec joueur ou monstre => attaque
+            // TODO : faire attention à l'activation des pièces du Grand-Tout
+            // TODO : Vérifier si item au sol (interdire si artefact ou trésor)
+            case 0:     // UP => Il faut que le monstre soit à y = 18 au maximum (sinon il sort du tableau de positions)
+                if (monster->posY + 1 < 19 && m->map->list_case[monster->posY+1][monster->posX].background != MAP_WATER
                     && m->map->list_case[monster->posY+1][monster->posX].element != MAP_PLAYER
                     && m->map->list_case[monster->posY+1][monster->posX].element != MAP_MONSTER
                     && m->map->list_case[monster->posY+1][monster->posX].element != MAP_OBSTACLE){
@@ -273,8 +277,8 @@ void monsterMove(completeMap* m, monstre* monster){
                     monster->posY--;
                 }
                 break;
-            case 2:     // RIGHT => Il faut que le monstre soit à x = 18 au maximum (sinon il sort du tableau de positions)
-            if (monster->posX + 1 < 19 && m->map->list_case[monster->posY][monster->posX+1].background != MAP_WATER 
+            case 2:     // RIGHT => Il faut que le monstre soit à x = 38 au maximum (sinon il sort du tableau de positions)
+            if (monster->posX + 1 < 39 && m->map->list_case[monster->posY][monster->posX+1].background != MAP_WATER 
                 && m->map->list_case[monster->posY][monster->posX+1].element != MAP_PLAYER
                 && m->map->list_case[monster->posY][monster->posX+1].element != MAP_MONSTER 
                 && m->map->list_case[monster->posY][monster->posX+1].element != MAP_OBSTACLE){
@@ -298,5 +302,7 @@ void monsterMove(completeMap* m, monstre* monster){
         }
         pthread_mutex_unlock(&m->mutex);
 
-        sleep(1);
+        // Temps d'attente avant le prochain mouvement
+        int sleeping = (int) 5 - 0.05*monster->vitesse_deplacement;
+        sleep(sleeping + 1);
 }
