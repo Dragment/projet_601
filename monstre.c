@@ -3,12 +3,12 @@
 #include <time.h>
 #include <string.h>
 
-#define nbMonstreDifferents 2 // Nombre de variété de monstre différents
-monstre gobelin = {"Gobelin", 10, 2, 3, 4, 5, 10};
-monstre orc = {"Orc", 20, 5, 8, 2, 2, 25};
+#define nbMonstreDifferents 2 // Nombre de variétés de monstres différents
+monstre gobelin = {"Gobelin", 10, 2, 3, 4, 5, 10, 0, 0};
+monstre orc = {"Orc", 20, 5, 8, 2, 2, 25, 0, 0};
 monstre* listMonstreExistant[nbMonstreDifferents] = {&gobelin, &orc};
 
-monstre* creer_monstre(){
+monstre* creer_monstre(int posX, int posY){
     monstre* m = malloc(sizeof(monstre));
     srand(time(NULL));
     int nb = rand() % nbMonstreDifferents;
@@ -21,6 +21,8 @@ monstre* creer_monstre(){
     m->vitesse_attaque = ref->vitesse_attaque;
     m->vitesse_deplacement = ref->vitesse_deplacement;
     m->xp = ref->xp;
+    m->posX = posX;
+    m->posY = posY;
     return m;
 }
 

@@ -3,7 +3,7 @@
 #include <string.h>
 #include <time.h>
 
-player* initNewPlayer(char* nom){
+player* initNewPlayer(char* nom, int posX, int posY){
     player* p = (player*)malloc(sizeof(player));
     p->pvMax = 10;
     p->pv = p->pvMax;
@@ -18,6 +18,8 @@ player* initNewPlayer(char* nom){
     for(int i = 0; i < 5; i++){
         p->listArtefact[i] = NULL;
     }
+    p->posX = posX;
+    p->posY = posY;
     return(p);
 }
 
