@@ -351,13 +351,13 @@ int main(int argc, char *argv[]) {
     }
 
     // Envoi du nom du joueur au serveur
-    if(write(socket, buffer, sizeof(char)*21)== -1) {
+    if(write(fd, buffer, sizeof(char)*21)== -1) {
         perror("Erreur lors de l'envoi du nom du joueur ");
         exit(EXIT_FAILURE);
     }
 
     // Lecture de la réponse du serveur
-    if(read(socket, buffer, sizeof(char)*21) == -1) {
+    if(read(fd, buffer, sizeof(char)*21) == -1) {
         perror("Erreur lors de la réception de la confirmation du choix du nom du joueur ");
         exit(EXIT_FAILURE);
     }

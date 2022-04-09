@@ -177,6 +177,8 @@ char getCharacter(char* item){
         return 'M';
     }else if(strcmp(item, "artefact") == 0){
         return 'A';
+    }else if(strcmp(item, "player") == 0){
+        return 'P';
     }else{
         return ' ';
     }
