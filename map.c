@@ -166,3 +166,131 @@ int enregistrer_edit_map(map* map, int numMap){
 
     return EXIT_SUCCESS;
 }
+
+char typeCase(map* m, int x, int y){
+    char c = "";
+    
+    switch(m->list_case[x][y].element){
+        case MAP_ARTIFACT:
+            if (m->list_case[x][y].background == MAP_GRASS) c = "A";
+            else if (m->list_case[x][y].background == MAP_SAND) c = "B";
+            else if (m->list_case[x][y].background == MAP_MONTAGNE) c = "C";
+            else if (m->list_case[x][y].background == MAP_WATER) c = "D";
+            break;
+        case MAP_TRESOR:
+            if (m->list_case[x][y].background == MAP_GRASS) c = "E";
+            else if (m->list_case[x][y].background == MAP_SAND) c = "F";
+            else if (m->list_case[x][y].background == MAP_MONTAGNE) c = "G";
+            else if (m->list_case[x][y].background == MAP_WATER) c = "H";
+            break;
+        case MAP_PLAYER:
+            if (m->list_case[x][y].background == MAP_GRASS) c = "I";
+            else if (m->list_case[x][y].background == MAP_SAND) c = "J";
+            else if (m->list_case[x][y].background == MAP_MONTAGNE) c = "K";
+            else if (m->list_case[x][y].background == MAP_WATER) c = "L";
+            break;
+        case MAP_MONSTER:
+            if (m->list_case[x][y].background == MAP_GRASS) c = "M";
+            else if (m->list_case[x][y].background == MAP_SAND) c = "N";
+            else if (m->list_case[x][y].background == MAP_MONTAGNE) c = "O";
+            else if (m->list_case[x][y].background == MAP_WATER) c = "P";
+            break;
+        case MAP_OBSTACLE:
+            if (m->list_case[x][y].background == MAP_GRASS) c = "Q";
+            else if (m->list_case[x][y].background == MAP_SAND) c = "R";
+            else if (m->list_case[x][y].background == MAP_MONTAGNE) c = "S";
+            else if (m->list_case[x][y].background == MAP_WATER) c = "T";
+            break;
+        case MAP_VIDE:
+            if (m->list_case[x][y].background == MAP_GRASS) c = "U";
+            else if (m->list_case[x][y].background == MAP_SAND) c = "V";
+            else if (m->list_case[x][y].background == MAP_MONTAGNE) c = "W";
+            else if (m->list_case[x][y].background == MAP_WATER) c = "X";
+            break;
+        default:
+            break;
+    }
+    
+    return c;
+}
+
+int typeCaseDecompression(char c, int type){
+    if (type == ELEMENT){
+        if (c == "A" || c == "B" || c == "C" || c == "D")       return MAP_ARTIFACT;
+        else if(c == "E" || c == "F" || c == "G" || c == "H")   return MAP_TRESOR;
+        else if(c == "I" || c == "J" || c == "K" || c == "L")   return MAP_PLAYER;
+        else if(c == "M" || c == "N" || c == "O" || c == "P")   return MAP_MONSTER;
+        else if(c == "Q" || c == "R" || c == "S" || c == "T")   return MAP_OBSTACLE;
+        else if(c == "U" || c == "V" || c == "W" || c == "X")   return MAP_VIDE;
+    }else if(type == BACKGROUND){
+        if(c == "A" || c == "E" || c == "I" || c == "M" || c == "Q" || c == "U")        return MAP_GRASS;
+        else if(c == "B" || c == "F" || c == "J" || c == "N" || c == "R" || c == "V")   return MAP_SAND;
+        else if(c == "C" || c == "G" || c == "K" || c == "O" || c == "S" || c == "W")   return MAP_MONTAGNE;
+        else if(c == "D" || c == "H" || c == "L" || c == "P" || c == "T" || c == "X")   return MAP_WATER;
+    }else{
+        fprintf(stderr, "Type incorrect ");
+        exit(EXIT_FAILURE);
+    }
+}
+
+char* compresserMap(map* m){    // Permet de compresser l'affichage d'une map jusqu'à 801 octets (soit 20 maps au minimum dans une file de messages)
+    char mStr[801] = NULL;
+    char tmp = "", c = "";
+    int compt = 0;
+
+    // Parcourir la fenêtre
+    for (int x = 0 ; x < 40 ; i++){
+        for (int y = y < 20 ; y++){
+            // Attribution d'un code à chaque case de type élément/background possible
+            if (strcmp(tmp, c) == 0){
+                compt++;
+            }else{
+                if (compt > 1){
+                    strcat(mStr, tmp);
+                    strcat(mStr, compt);  
+                }
+                else strcat(mStr, tmp);
+
+                compt = 0;
+                tmp = c;
+            }  
+        }
+    }
+
+    if (strlen(mStr) < 801)
+        strcat(mStr, '\0');
+
+    return mStr;
+}
+
+void decompresserMap(char* mStr, map* m){   // Permet de reproduire le visuel d'une map complète
+                                            // Non terminée car non utilisée pour le rendu final
+    char c = "";    // Type des cases
+    char* tmp = NULL;     // Permet de stocker les chiffres formant un nombre dans mStr temporairement
+    char* tmp2 = NULL;
+    int curr = 0, qte = 0, len = strlen(mStr);  // curr => indice du caractère traité
+                                                // qte => nombre de cases du même type d'affilées
+    int x = 0, y = 0;   // Coordonnées utilisées pour la map                                                                
+
+    // Parcours de la chaîne
+    while (curr < len){
+        // On l'ajoute le caractère courant à la map en le changeant en plusieurs cases qui lui correspondent
+        if(mStr[curr] >= "A" && mStr[curr] <= "X"){
+            if (strcmp(tmp, NULL) != 0 && strcmp(tmp2, NULL) != 0){
+                qte = atoi(tmp2);
+                while (qte > 0){
+                    m->list_case[x][y].element = typeCaseDecompression(tmp, ELEMENT);
+                    m->list_case[x][y].background = typeCaseDecompression(tmp, BACKGROUND);
+                    x = (x + 1) % 40;
+                    y = (int) ((x + 1) / 20);
+                    qte--;
+                    tmp2 = NULL;
+                }
+            }
+            tmp = mStr[curr];
+        }else{
+            strcat(tmp2, mStr[curr]);
+        }
+        curr++;
+    }
+}

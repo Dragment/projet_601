@@ -6,7 +6,7 @@
 typedef struct player{
     int pv, pvMax, armure, force, vitesse_attaque, vitesse_deplacement, nbPieces, xp;
     int posX, posY;
-    char* nom;
+    char nom[21];
     artefact* listArtefact[5];
 }player;
 
