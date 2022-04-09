@@ -101,7 +101,7 @@ int main(int argc, char* argv[]){
                 }
 
                 // Traitement
-                // ... TODO:
+                // TODO
                 
                 // La première requete sera toujours la même
                 requete requete;
@@ -114,7 +114,23 @@ int main(int argc, char* argv[]){
                 int player_map_y = requete.map_y;
                 int playerId = requete.playerId;
 
-                // TODO: Créer player et le placer sur la map
+                // TODO: Créer player et le placer sur la map // A TESTER
+                char* buffer;
+
+                // Lecture de la requête du client
+                if(read(socket, buffer, sizeof(buffer)) == -1) {
+                    perror("Erreur lors de la réception de la confirmation du choix du nom du joueur ");
+                    exit(EXIT_FAILURE);
+                }
+
+                // Envoi de la validation du nom
+                if(write(socket, &adresse, sizeof(adresse))== -1) {
+                    perror("Erreur lors de l'envoi du nom du joueur ");
+                    exit(EXIT_FAILURE);
+                }
+
+                player* p = initNewPlayer(buffer);
+                ajouter_joueur(worldMap.tete, p);
                 
                 printf("Envoie de la première map à %d\n", playerId);
                 // Envoi de la première map

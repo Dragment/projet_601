@@ -11,7 +11,7 @@ player* initNewPlayer(char* nom){
     p->force = 1;
     p->vitesse_attaque = 1;
     p->vitesse_deplacement = 1;
-    p->nbPiece = 0;
+    p->nbPieces = 0;
     p->xp = 0;
     p->nom = malloc(sizeof(char)*strlen(nom));
     strcpy(p->nom, nom);

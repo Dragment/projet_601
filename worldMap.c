@@ -5,6 +5,19 @@
 #include <time.h>
 #include <stdio.h>
 
+void ajouter_joueur(completeMap* m, player* p){
+    listPlayer* l = malloc(sizeof(listPlayer));
+    l->player = p;
+    l->suiv = NULL;
+    if(m->listPlayerTete == NULL){
+        m->listPlayerTete = l;
+        m->listPlayerQueue = l;
+    }else{
+        m->listPlayerQueue->suiv = l;
+        m->listPlayerQueue = l;
+    }
+}
+
 void ajouter_monstre(completeMap* m, monstre* monstre){
     listMonstre* l = malloc(sizeof(listMonstre));
     l->monstre = monstre;
