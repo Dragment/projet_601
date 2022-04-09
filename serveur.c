@@ -100,46 +100,73 @@ int main(int argc, char* argv[]){
                     exit(EXIT_FAILURE);
                 }
 
-                // Traitement
-                // TODO
-                
-                // La première requete sera toujours la même
-                requete requete;
-                if(read(sockclient, &requete, sizeof(requete)) == -1) {
-                    perror("Erreur lors de la demande de récupération première map client ");
-                    exit(EXIT_FAILURE);
-                }
-
-                int player_map_x = requete.map_x;
-                int player_map_y = requete.map_y;
-                int playerId = requete.playerId;
+                // Partie nom du joueur //
 
                 char buffer[21];
                 char buffer2[3];
 
                 // Lecture de la requête du client
-                if(read(socket, buffer, sizeof(char)*21) == -1) {
+                if(read(sockclient, buffer, sizeof(char)*21) == -1) {
                     perror("Erreur lors de la réception de la confirmation du choix du nom du joueur ");
                     exit(EXIT_FAILURE);
                 }
 
-
                 // Envoi de la validation du nom
-                if(write(socket, buffer2, sizeof(char)*3)== -1) {
+                if(write(sockclient, buffer2, sizeof(char)*3)== -1) {
                     perror("Erreur lors de l'envoi du nom du joueur ");
                     exit(EXIT_FAILURE);
                 }
 
                 player* p = initNewPlayer(buffer);
                 ajouter_joueur(worldMap.tete, p);
-                
-                printf("Envoie de la première map à %d\n", playerId);
-                // Envoi de la première map
-                // marche pas si on fait juste => map* map = get_or_create_complete_map(worldMap, player_map_x, player_map_y)->map;
-                map map = *(get_or_create_complete_map(worldMap, player_map_x, player_map_y)->map);
-                if(write(sockclient, &map, sizeof(map)) == -1) {
-                    perror("Erreur lors de l'envoi de la première map ");
-                    exit(EXIT_FAILURE);
+
+
+                // Déclaration variables
+                int player_map_x = 0;
+                int player_map_y = 0;
+                int playerId = 0;
+
+                //Boucle de traitement
+                requete requeteClient;
+                while(stop == 0){
+                    if(read(sockclient, &requeteClient, sizeof(requete)) == -1) {
+                        perror("Erreur lors de la demande TCP ");
+                        exit(EXIT_FAILURE);
+                    }
+
+                    // Premier envoie de carte
+                    if(requeteClient.commande == PREMIERE_DEMANDE_CARTE){
+                        playerId = requeteClient.playerId;
+                        printf("Envoie de la première map à %d\n", playerId);
+                        // marche pas si on fait juste => map* map = get_or_create_complete_map(worldMap, player_map_x, player_map_y)->map;
+                        map map = *(get_or_create_complete_map(worldMap, player_map_x, player_map_y)->map);
+                        if(write(sockclient, &map, sizeof(map)) == -1) {
+                            perror("Erreur lors de l'envoi de la première map ");
+                            exit(EXIT_FAILURE);
+                        }
+                    }else if(requeteClient.commande == MOVE){
+                        switch (requeteClient.option)
+                        {
+                        case 'U':
+                            /* code */ // TODO: déplacer player
+                            break;
+                        case 'D':
+                            /* code */ // TODO: déplacer player
+                            break;
+                        case 'R':
+                            /* code */ // TODO: déplacer player
+                            break;
+                        case 'L':
+                            /* code */ // TODO: déplacer player
+                            break;
+                        case ' ':
+                            /* code */ // TODO: Pièce du grand tout
+                            break;
+                        default:
+                            
+                            break;
+                        }
+                    }
                 }
 
                 // Fermeture de la socket de communication

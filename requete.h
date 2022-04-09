@@ -10,4 +10,9 @@ typedef struct requete{
     char option;
 }requete;
 
+typedef struct reponse_map_et_player{
+    map m;
+    player p;
+}reponse_map_et_player;
+
 #endif

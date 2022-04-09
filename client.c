@@ -220,9 +220,7 @@ int lancerJeu(int socket){
 
     // Ajout des valeurs dans attributs
     //initialiser_attributs(attributs); //TODO: Initialiser affichage attributs
-    wprintw(attributs, "Joueur : %s\n\nPV : %d/%d\nArmure : %d\nForce : %d\nVitesse d'attaque : %d\nVitesse de déplacement : %d\n\nXP : %d/100\nPièces possédées : %d\n\nStats d'artéfacts : %s", 
-    /* pseudo, pv, pvMax, armure, force, vitesse d'attaque, vitesse de deplacement,
-    xp, nbPieces, statsArtefact1, statsArtefact2, statsArtefact3, statsArtefact4, statsArtefact5*/);
+    wprintw(attributs, "Joueur : %s\n\nPV : %d/%d\nArmure : %d\nForce : %d\nVitesse d'attaque : %d\nVitesse de déplacement : %d\n\nXP : %d/100\nPièces possédées : %d\n\nStats d'artéfacts : %s", /* pseudo, pv, pvMax, armure, force, vitesse d'attaque, vitesse de deplacement, xp, nbPieces, statsArtefact1, statsArtefact2, statsArtefact3, statsArtefact4, statsArtefact5*/);
 
     // Traitement des actions
     int ch;
