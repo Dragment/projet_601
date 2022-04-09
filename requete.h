@@ -7,7 +7,7 @@
 
 typedef struct requete{
     int map_x, map_y, playerId, commande;
-    char option[255];
+    char option;
 }requete;
 
 #endif

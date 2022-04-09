@@ -252,19 +252,19 @@ int lancerJeu(int socket){
 
             if(ch == KEY_UP){
                 // Flèche haut
-                requete.option[0] = 'U';
+                requete.option = 'U';
             }else if(ch == KEY_DOWN){
                 // Flèche bas
-                requete.option[0] = 'D';
+                requete.option = 'D';
             }else if(ch == KEY_RIGHT){
                 // Flèche droite
-                requete.option[0] = 'R';
+                requete.option = 'R';
             }else if(ch == KEY_LEFT){
                 // Flèche gauche
-                requete.option[0] = 'L';
+                requete.option = 'L';
             }else if(ch == ' '){
                 // Espace
-                requete.option[0] = 'S';
+                requete.option = 'S';
             }
         }
         //Envoie requete
