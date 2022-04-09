@@ -204,33 +204,34 @@ completeMap* get_or_create_complete_map(worldMapList m, int x, int y){
 void playerMove(completeMap* m, player* p, char mv){    // TODO : Rajouter des "if" pour vérifier si au bord de la map et que la prochaine case est dispo
     pthread_mutex_lock(&m->mutex);    // TODO : Rajouter vérification "if ... != ..."
     switch(mv){
+        // TODO : Penser à modifier les coordonnées du Joueur (posX et posY)
         case 'U':
-            if (m->map->list_case[p->posY+1][p->posX].background != MAP_WATER && m->map->list_case[p->posY][p->posX].element != MAP_PLAYER
-                && m->map->list_case[p->posY][p->posX].element != MAP_MONSTER && m->map->list_case[p->posY][p->posX].element != MAP_OBSTACLE){
+            if (m->map->list_case[p->posY+1][p->posX].background != MAP_WATER && m->map->list_case[p->posY+1][p->posX].element != MAP_PLAYER
+                && m->map->list_case[p->posY+1][p->posX].element != MAP_MONSTER && m->map->list_case[p->posY+1][p->posX].element != MAP_OBSTACLE){
                 m->map->list_case[p->posY][p->posX].element = MAP_VIDE;
                 // TODO : Vérifier si item au sol (interdire si set artefacts rempli ou trop de pièces du grand tout et obtenir item au sol avant de se déplacer)
                 m->map->list_case[p->posY+1][p->posX].element = MAP_PLAYER;
             }
             break;
         case 'D':
-            if (m->map->list_case[p->posY-1][p->posX].background != MAP_WATER && m->map->list_case[p->posY][p->posX].element != MAP_PLAYER
-                && m->map->list_case[p->posY][p->posX].element != MAP_MONSTER && m->map->list_case[p->posY][p->posX].element != MAP_OBSTACLE){
+            if (m->map->list_case[p->posY-1][p->posX].background != MAP_WATER && m->map->list_case[p->posY-1][p->posX].element != MAP_PLAYER
+                && m->map->list_case[p->posY-1][p->posX].element != MAP_MONSTER && m->map->list_case[p->posY-1][p->posX].element != MAP_OBSTACLE){
                 m->map->list_case[p->posY][p->posX].element = MAP_VIDE;
                 // TODO : Vérifier si item au sol (interdire si set artefacts rempli ou trop de pièces du grand tout et obtenir item au sol avant de se déplacer)
                 m->map->list_case[p->posY-1][p->posX].element = MAP_PLAYER;
             }
             break;
         case 'R':
-            if (m->map->list_case[p->posY][p->posX].background != MAP_WATER && m->map->list_case[p->posY][p->posX].element != MAP_PLAYER
-                && m->map->list_case[p->posY][p->posX].element != MAP_MONSTER && m->map->list_case[p->posY][p->posX].element != MAP_OBSTACLE){
+            if (m->map->list_case[p->posY][p->posX+1].background != MAP_WATER && m->map->list_case[p->posY][p->posX+1].element != MAP_PLAYER
+                && m->map->list_case[p->posY][p->posX+1].element != MAP_MONSTER && m->map->list_case[p->posY][p->posX+1].element != MAP_OBSTACLE){
                 m->map->list_case[p->posY][p->posX].element = MAP_VIDE;
                 // TODO : Vérifier si item au sol (interdire si set artefacts rempli ou trop de pièces du grand tout et obtenir item au sol avant de se déplacer)
                 m->map->list_case[p->posY][p->posX+1].element = MAP_PLAYER;
             }
             break;
         case 'L':
-            if (m->map->list_case[p->posY][p->posX].background != MAP_WATER && m->map->list_case[p->posY][p->posX].element != MAP_PLAYER
-                && m->map->list_case[p->posY][p->posX].element != MAP_MONSTER && m->map->list_case[p->posY][p->posX].element != MAP_OBSTACLE){
+            if (m->map->list_case[p->posY][p->posX-1].background != MAP_WATER && m->map->list_case[p->posY][p->posX-1].element != MAP_PLAYER
+                && m->map->list_case[p->posY][p->posX-1].element != MAP_MONSTER && m->map->list_case[p->posY][p->posX-1].element != MAP_OBSTACLE){
                 m->map->list_case[p->posY][p->posX].element = MAP_VIDE;
                 // TODO : Vérifier si item au sol (interdire si set artefacts rempli ou trop de pièces du grand tout et obtenir item au sol avant de se déplacer)
                 m->map->list_case[p->posY][p->posX-1].element = MAP_PLAYER;
@@ -240,4 +241,62 @@ void playerMove(completeMap* m, player* p, char mv){    // TODO : Rajouter des "
             break;
     }
     pthread_mutex_unlock(&m->mutex);    // TODO : Rajouter vérification "if ... != ..."
+}
+
+void monsterMove(completeMap* m, monstre* monster){
+    int cas;
+    srand(time(NULL));
+
+    while (monster->pv > 0){
+        cas = rand() % 4;
+
+        pthread_mutex_lock(&m->mutex);
+
+        switch(cas){
+            case 0:     // UP => Il faut que le monstre soit à y = 38 au maximum (sinon il sort du tableau de positions)
+                if (monster->posY + 1 < 39 && m->map->list_case[monster->posY+1][monster->posX].background != MAP_WATER
+                    && m->map->list_case[monster->posY+1][monster->posX].element != MAP_PLAYER
+                    && m->map->list_case[monster->posY+1][monster->posX].element != MAP_MONSTER
+                    && m->map->list_case[monster->posY+1][monster->posX].element != MAP_OBSTACLE){
+                        m->map->list_case[monster->posY][monster->posX].element = MAP_VIDE;
+                        m->map->list_case[monster->posY+1][monster->posX].element = MAP_MONSTER;
+                        monster->posY++;
+                    }
+                break;
+            case 1:     // DOWN => Il faut que le monstre soit à y = 1 au minimum (sinon il sort du tableau de positions)
+            if (monster->posY - 1 > 0 && m->map->list_case[monster->posY-1][monster->posX].background != MAP_WATER
+                && m->map->list_case[monster->posY-1][monster->posX].element != MAP_PLAYER
+                && m->map->list_case[monster->posY-1][monster->posX].element != MAP_MONSTER 
+                && m->map->list_case[monster->posY-1][monster->posX].element != MAP_OBSTACLE){
+                    m->map->list_case[monster->posY][monster->posX].element = MAP_VIDE;
+                    m->map->list_case[monster->posY-1][monster->posX].element = MAP_MONSTER;
+                    monster->posY--;
+                }
+                break;
+            case 2:     // RIGHT => Il faut que le monstre soit à x = 18 au maximum (sinon il sort du tableau de positions)
+            if (monster->posX + 1 < 19 && m->map->list_case[monster->posY][monster->posX+1].background != MAP_WATER 
+                && m->map->list_case[monster->posY][monster->posX+1].element != MAP_PLAYER
+                && m->map->list_case[monster->posY][monster->posX+1].element != MAP_MONSTER 
+                && m->map->list_case[monster->posY][monster->posX+1].element != MAP_OBSTACLE){
+                    m->map->list_case[monster->posY][monster->posX].element = MAP_VIDE;
+                    m->map->list_case[monster->posY][monster->posX+1].element = MAP_MONSTER;
+                    monster->posX++;
+                }
+                break;
+            case 3:     // LEFT => Il faut que le monstre soit à x = 1 au minimum (sinon il sort du tableau de positions)
+            if (monster->posX - 1 > 0 && m->map->list_case[monster->posY][monster->posX-1].background != MAP_WATER 
+                && m->map->list_case[monster->posY][monster->posX-1].element != MAP_PLAYER
+                && m->map->list_case[monster->posY][monster->posX-1].element != MAP_MONSTER 
+                && m->map->list_case[monster->posY][monster->posX-1].element != MAP_OBSTACLE){
+                    m->map->list_case[monster->posY][monster->posX].element = MAP_VIDE;
+                    m->map->list_case[monster->posY][monster->posX-1].element = MAP_MONSTER;
+                    monster->posX--;
+                }
+                break;
+            default:
+                break;
+        }
+        pthread_mutex_unlock(&m->mutex);
+
+        sleep(1);
 }
