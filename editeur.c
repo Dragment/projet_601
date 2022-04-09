@@ -348,6 +348,7 @@ int creer_carte(){
     init_pair(102, COLOR_WHITE, COLOR_BLUE);
     init_pair(103, COLOR_WHITE, COLOR_RED);
     init_pair(104, COLOR_WHITE, COLOR_BLACK);
+    init_pair(105, COLOR_BLACK, )
 
     // Remplir la map d'herbe
     remplir_herbe(carte);
