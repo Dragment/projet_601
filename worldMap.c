@@ -219,41 +219,44 @@ void trouver_lieu_spawn(worldMapList m, int* ret_x, int* ret_y){
     *ret_y = testy;
 }
 
-/*void playerMove(completeMap* m, player* p, char mv){    // TODO : Rajouter des "if" pour vérifier si au bord de la map et que la prochaine case est dispo
+void playerMove(completeMap* m, player* p, char mv){    // TODO : Rajouter des "if" pour vérifier si au bord de la map et que la prochaine case est dispo
     pthread_mutex_lock(&m->mutex);    // TODO : Rajouter vérification "if ... != ..."
     switch(mv){
-        // TODO : Penser à modifier les coordonnées du Joueur (posX et posY)
         // TODO : si case avec joueur ou monstre => attaque // artéfact ou trésor => ramasser si possible
         case 'U':
             if (m->map->list_case[p->posY+1][p->posX].background != MAP_WATER && m->map->list_case[p->posY+1][p->posX].element != MAP_PLAYER
-                && m->map->list_case[p->posY+1][p->posX].element != MAP_MONSTER && m->map->list_case[p->posY+1][p->posX].element != MAP_OBSTACLE){
+            && m->map->list_case[p->posY+1][p->posX].element != MAP_MONSTER && m->map->list_case[p->posY+1][p->posX].element != MAP_OBSTACLE){
                 m->map->list_case[p->posY][p->posX].element = MAP_VIDE;
                 // TODO : Vérifier si item au sol (interdire si set artefacts rempli ou trop de pièces du grand tout et obtenir item au sol avant de se déplacer)
                 m->map->list_case[p->posY+1][p->posX].element = MAP_PLAYER;
+                p->posY++;
             }
             break;
         case 'D':
             if (m->map->list_case[p->posY-1][p->posX].background != MAP_WATER && m->map->list_case[p->posY-1][p->posX].element != MAP_PLAYER
-                && m->map->list_case[p->posY-1][p->posX].element != MAP_MONSTER && m->map->list_case[p->posY-1][p->posX].element != MAP_OBSTACLE){
+            && m->map->list_case[p->posY-1][p->posX].element != MAP_MONSTER && m->map->list_case[p->posY-1][p->posX].element != MAP_OBSTACLE){
                 m->map->list_case[p->posY][p->posX].element = MAP_VIDE;
                 // TODO : Vérifier si item au sol (interdire si set artefacts rempli ou trop de pièces du grand tout et obtenir item au sol avant de se déplacer)
                 m->map->list_case[p->posY-1][p->posX].element = MAP_PLAYER;
+                p->posY--;
             }
             break;
         case 'R':
             if (m->map->list_case[p->posY][p->posX+1].background != MAP_WATER && m->map->list_case[p->posY][p->posX+1].element != MAP_PLAYER
-                && m->map->list_case[p->posY][p->posX+1].element != MAP_MONSTER && m->map->list_case[p->posY][p->posX+1].element != MAP_OBSTACLE){
+            && m->map->list_case[p->posY][p->posX+1].element != MAP_MONSTER && m->map->list_case[p->posY][p->posX+1].element != MAP_OBSTACLE){
                 m->map->list_case[p->posY][p->posX].element = MAP_VIDE;
                 // TODO : Vérifier si item au sol (interdire si set artefacts rempli ou trop de pièces du grand tout et obtenir item au sol avant de se déplacer)
                 m->map->list_case[p->posY][p->posX+1].element = MAP_PLAYER;
+                p->posX++;
             }
             break;
         case 'L':
             if (m->map->list_case[p->posY][p->posX-1].background != MAP_WATER && m->map->list_case[p->posY][p->posX-1].element != MAP_PLAYER
-                && m->map->list_case[p->posY][p->posX-1].element != MAP_MONSTER && m->map->list_case[p->posY][p->posX-1].element != MAP_OBSTACLE){
+            && m->map->list_case[p->posY][p->posX-1].element != MAP_MONSTER && m->map->list_case[p->posY][p->posX-1].element != MAP_OBSTACLE){
                 m->map->list_case[p->posY][p->posX].element = MAP_VIDE;
                 // TODO : Vérifier si item au sol (interdire si set artefacts rempli ou trop de pièces du grand tout et obtenir item au sol avant de se déplacer)
                 m->map->list_case[p->posY][p->posX-1].element = MAP_PLAYER;
+                p->posX--;
             }
             break;
         default:
@@ -275,51 +278,83 @@ void monsterMove(completeMap* m, monstre* monster){
             // TODO : si case avec joueur ou monstre => attaque
             // TODO : faire attention à l'activation des pièces du Grand-Tout
             case 0:     // UP => Il faut que le monstre soit à y = 18 au maximum (sinon il sort du tableau de positions)
-                if (monster->posY + 1 < 19 && m->map->list_case[monster->posY+1][monster->posX].background != MAP_WATER
-                    && m->map->list_case[monster->posY+1][monster->posX].element != MAP_PLAYER
-                    && m->map->list_case[monster->posY+1][monster->posX].element != MAP_MONSTER
+                // Case dans la map
+                if (monster->posY + 1 < 19){
+                    // Case disponible
+                    if (m->map->list_case[monster->posY+1][monster->posX].background != MAP_WATER
                     && m->map->list_case[monster->posY+1][monster->posX].element != MAP_OBSTACLE
                     && m->map->list_case[monster->posY+1][monster->posX].element != MAP_TRESOR
                     && m->map->list_case[monster->posY+1][monster->posX].element != MAP_ARTIFACT){
-                        m->map->list_case[monster->posY][monster->posX].element = MAP_VIDE;
-                        m->map->list_case[monster->posY+1][monster->posX].element = MAP_MONSTER;
-                        monster->posY++;
+                        // Aucun monstre ou joueur dessus
+                        if(m->map->list_case[monster->posY+1][monster->posX].element != MAP_PLAYER
+                        && m->map->list_case[monster->posY+1][monster->posX].element != MAP_MONSTER){
+                            m->map->list_case[monster->posY][monster->posX].element = MAP_VIDE;
+                            m->map->list_case[monster->posY+1][monster->posX].element = MAP_MONSTER;
+                            monster->posY++;
+                        }/*else{ // Joueur ou monstre dessus
+                            // TODO : attaquer() l'entité sur la case
+                        }*/
                     }
+                }
                 break;
             case 1:     // DOWN => Il faut que le monstre soit à y = 1 au minimum (sinon il sort du tableau de positions)
-            if (monster->posY - 1 > 0 && m->map->list_case[monster->posY-1][monster->posX].background != MAP_WATER
-                && m->map->list_case[monster->posY-1][monster->posX].element != MAP_PLAYER
-                && m->map->list_case[monster->posY-1][monster->posX].element != MAP_MONSTER 
-                && m->map->list_case[monster->posY-1][monster->posX].element != MAP_OBSTACLE
-                && m->map->list_case[monster->posY-1][monster->posX].element != MAP_TRESOR
-                && m->map->list_case[monster->posY-1][monster->posX].element != MAP_ARTIFACT){
-                    m->map->list_case[monster->posY][monster->posX].element = MAP_VIDE;
-                    m->map->list_case[monster->posY-1][monster->posX].element = MAP_MONSTER;
-                    monster->posY--;
+                // Case dans la map
+                if (monster->posY - 1 > 0){
+                    // Case disponible
+                    if(m->map->list_case[monster->posY-1][monster->posX].background != MAP_WATER
+                    && m->map->list_case[monster->posY-1][monster->posX].element != MAP_OBSTACLE
+                    && m->map->list_case[monster->posY-1][monster->posX].element != MAP_TRESOR
+                    && m->map->list_case[monster->posY-1][monster->posX].element != MAP_ARTIFACT){
+                        // Aucun monstre ou joueur dessus
+                        if (m->map->list_case[monster->posY-1][monster->posX].element != MAP_PLAYER
+                        && m->map->list_case[monster->posY-1][monster->posX].element != MAP_MONSTER){
+                            m->map->list_case[monster->posY][monster->posX].element = MAP_VIDE;
+                            m->map->list_case[monster->posY-1][monster->posX].element = MAP_MONSTER;
+                            monster->posY--;
+                        }/*else{ // Joueur ou monstre dessus
+                            // TODO : attaquer() l'entité sur la case
+                        }*/
+                    }
                 }
                 break;
             case 2:     // RIGHT => Il faut que le monstre soit à x = 38 au maximum (sinon il sort du tableau de positions)
-            if (monster->posX + 1 < 39 && m->map->list_case[monster->posY][monster->posX+1].background != MAP_WATER 
-                && m->map->list_case[monster->posY][monster->posX+1].element != MAP_PLAYER
-                && m->map->list_case[monster->posY][monster->posX+1].element != MAP_MONSTER 
-                && m->map->list_case[monster->posY][monster->posX+1].element != MAP_OBSTACLE
-                && m->map->list_case[monster->posY][monster->posX+1].element != MAP_TRESOR
-                && m->map->list_case[monster->posY][monster->posX+1].element != MAP_ARTIFACT){
-                    m->map->list_case[monster->posY][monster->posX].element = MAP_VIDE;
-                    m->map->list_case[monster->posY][monster->posX+1].element = MAP_MONSTER;
-                    monster->posX++;
+                // Case dans la map
+                if (monster->posX + 1 < 39){
+                    // Case disponible
+                    if (m->map->list_case[monster->posY][monster->posX+1].background != MAP_WATER 
+                    && m->map->list_case[monster->posY][monster->posX+1].element != MAP_OBSTACLE
+                    && m->map->list_case[monster->posY][monster->posX+1].element != MAP_TRESOR
+                    && m->map->list_case[monster->posY][monster->posX+1].element != MAP_ARTIFACT){
+                        // Aucun monstre ou joueur dessus
+                        if (m->map->list_case[monster->posY][monster->posX+1].element != MAP_PLAYER
+                        && m->map->list_case[monster->posY][monster->posX+1].element != MAP_MONSTER){
+                            m->map->list_case[monster->posY][monster->posX].element = MAP_VIDE;
+                            m->map->list_case[monster->posY][monster->posX+1].element = MAP_MONSTER;
+                            monster->posX++;
+                        }/*else{ // Joueur ou monstre dessus
+                            // TODO : attaquer() l'entité sur la case
+                        }*/
+                    }
                 }
                 break;
             case 3:     // LEFT => Il faut que le monstre soit à x = 1 au minimum (sinon il sort du tableau de positions)
-            if (monster->posX - 1 > 0 && m->map->list_case[monster->posY][monster->posX-1].background != MAP_WATER 
-                && m->map->list_case[monster->posY][monster->posX-1].element != MAP_PLAYER
-                && m->map->list_case[monster->posY][monster->posX-1].element != MAP_MONSTER 
-                && m->map->list_case[monster->posY][monster->posX-1].element != MAP_OBSTACLE
-                && m->map->list_case[monster->posY][monster->posX-1].element != MAP_TRESOR
-                && m->map->list_case[monster->posY][monster->posX-1].element != MAP_ARTIFACT){
-                    m->map->list_case[monster->posY][monster->posX].element = MAP_VIDE;
-                    m->map->list_case[monster->posY][monster->posX-1].element = MAP_MONSTER;
-                    monster->posX--;
+                // Case dans la map
+                if (monster->posX - 1 > 0){
+                    // Case disponible
+                    if (m->map->list_case[monster->posY][monster->posX-1].background != MAP_WATER 
+                    && m->map->list_case[monster->posY][monster->posX-1].element != MAP_OBSTACLE
+                    && m->map->list_case[monster->posY][monster->posX-1].element != MAP_TRESOR
+                    && m->map->list_case[monster->posY][monster->posX-1].element != MAP_ARTIFACT){
+                        // Aucun monstre ou joueur dessus
+                        if (m->map->list_case[monster->posY][monster->posX-1].element != MAP_PLAYER
+                        && m->map->list_case[monster->posY][monster->posX-1].element != MAP_MONSTER){
+                            m->map->list_case[monster->posY][monster->posX].element = MAP_VIDE;
+                            m->map->list_case[monster->posY][monster->posX-1].element = MAP_MONSTER;
+                            monster->posX--;
+                        }/*else{ // Joueur ou monstre dessus
+                            // TODO : attaquer() l'entité sur la case
+                        }*/
+                    }
                 }
                 break;
             default:
@@ -330,4 +365,5 @@ void monsterMove(completeMap* m, monstre* monster){
         // Temps d'attente avant le prochain mouvement
         int sleeping = (int) 5 - 0.05*monster->vitesse_deplacement;
         sleep(sleeping + 1);
-}*/
+    }
+}
