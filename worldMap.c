@@ -77,6 +77,7 @@ completeMap* generer_complete_map(int x, int y, char* repertoire){
     completeMap* m = malloc(sizeof(completeMap));
     m->x = x;
     m->y = y;
+    pthread_mutex_init(&m->mutex, NULL);    // TODO : Rajouter vérification "if ... != ..."
 
     // Initialiser les listes
     m->listMonstreTete = NULL;
@@ -146,6 +147,7 @@ void delete_complete_map(completeMap* m){
     supprimer_list_monstre(m);
     supprimer_list_artefact(m);
     supprimer_list_player(m);
+    pthread_mutex_destroy(&m->mutex);   // TODO : Rajouter vérification "if ... != ..."
 
     supprimer_map(m->map);
     free(m);
@@ -197,4 +199,45 @@ completeMap* get_or_create_complete_map(worldMapList m, int x, int y){
     }
     // Retourner map trouvée ou créée
     return ret;
+}
+
+void playerMove(completeMap* m, player* p, char mv){    // TODO : Rajouter des "if" pour vérifier si au bord de la map et que la prochaine case est dispo
+    pthread_mutex_lock(&m->mutex);    // TODO : Rajouter vérification "if ... != ..."
+    switch(mv){
+        case 'U':
+            if (m->map->list_case[p->posY+1][p->posX].background != MAP_WATER && m->map->list_case[p->posY][p->posX].element != MAP_PLAYER
+                && m->map->list_case[p->posY][p->posX].element != MAP_MONSTER && m->map->list_case[p->posY][p->posX].element != MAP_OBSTACLE){
+                m->map->list_case[p->posY][p->posX].element = MAP_VIDE;
+                // TODO : Vérifier si item au sol (interdire si set artefacts rempli ou trop de pièces du grand tout et obtenir item au sol avant de se déplacer)
+                m->map->list_case[p->posY+1][p->posX].element = MAP_PLAYER;
+            }
+            break;
+        case 'D':
+            if (m->map->list_case[p->posY-1][p->posX].background != MAP_WATER && m->map->list_case[p->posY][p->posX].element != MAP_PLAYER
+                && m->map->list_case[p->posY][p->posX].element != MAP_MONSTER && m->map->list_case[p->posY][p->posX].element != MAP_OBSTACLE){
+                m->map->list_case[p->posY][p->posX].element = MAP_VIDE;
+                // TODO : Vérifier si item au sol (interdire si set artefacts rempli ou trop de pièces du grand tout et obtenir item au sol avant de se déplacer)
+                m->map->list_case[p->posY-1][p->posX].element = MAP_PLAYER;
+            }
+            break;
+        case 'R':
+            if (m->map->list_case[p->posY][p->posX].background != MAP_WATER && m->map->list_case[p->posY][p->posX].element != MAP_PLAYER
+                && m->map->list_case[p->posY][p->posX].element != MAP_MONSTER && m->map->list_case[p->posY][p->posX].element != MAP_OBSTACLE){
+                m->map->list_case[p->posY][p->posX].element = MAP_VIDE;
+                // TODO : Vérifier si item au sol (interdire si set artefacts rempli ou trop de pièces du grand tout et obtenir item au sol avant de se déplacer)
+                m->map->list_case[p->posY][p->posX+1].element = MAP_PLAYER;
+            }
+            break;
+        case 'L':
+            if (m->map->list_case[p->posY][p->posX].background != MAP_WATER && m->map->list_case[p->posY][p->posX].element != MAP_PLAYER
+                && m->map->list_case[p->posY][p->posX].element != MAP_MONSTER && m->map->list_case[p->posY][p->posX].element != MAP_OBSTACLE){
+                m->map->list_case[p->posY][p->posX].element = MAP_VIDE;
+                // TODO : Vérifier si item au sol (interdire si set artefacts rempli ou trop de pièces du grand tout et obtenir item au sol avant de se déplacer)
+                m->map->list_case[p->posY][p->posX-1].element = MAP_PLAYER;
+            }
+            break;
+        default:
+            break;
+    }
+    pthread_mutex_unlock(&m->mutex);    // TODO : Rajouter vérification "if ... != ..."
 }

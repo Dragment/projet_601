@@ -4,6 +4,7 @@
 #include "map.h"
 #include "monstre.h"
 #include "artefact.h"
+#include "pthread.h"
 
 // Listes Chainées
 typedef struct listMonstre{
@@ -26,6 +27,8 @@ typedef struct listPlayer{
 typedef struct completeMap{
     map* map;
     int x, y; // Coordonnées par rapport à la map globale de spawn
+    pthread_mutex_t mutex;
+
 
     // Listes chainées des entités
     listMonstre* listMonstreTete;
