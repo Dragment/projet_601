@@ -97,4 +97,6 @@ void* monsterMove_routine(void* arg);
 void pve(player* p, monstre* m);
 void pvp(player* p, player* m);
 
+void mort_player_world_map(completeMap* m, int x, int y);
+
 #endif

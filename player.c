@@ -122,3 +122,19 @@ void ouvrirTresor(player* p){
         }
     }
 }
+
+void reset_player(player* p, int posX, int posY){
+    p->pvMax = 25;
+    p->pv = p->pvMax;
+    p->armure = 10;
+    p->force = 2;
+    p->vitesse_attaque = 1;
+    p->vitesse_deplacement = 1;
+    p->nbPieces = 0;
+    p->xp = 0;
+    for(int i = 0; i < 5; i++){
+        p->listArtefact[i] = NULL;
+    }
+    p->posX = posX;
+    p->posY = posY;
+}

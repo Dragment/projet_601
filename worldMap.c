@@ -610,3 +610,10 @@ void pvp(player* p, player* m){
         upStats(m);
     }
 }
+
+void mort_player_world_map(completeMap* m, int x, int y){
+    pthread_mutex_lock(&m->mutex);
+    m->map->list_case[x][y].player = NULL;
+    m->map->list_case[x][y].element = MAP_VIDE;
+    pthread_mutex_unlock(&m->mutex);
+}
