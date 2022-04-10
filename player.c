@@ -133,6 +133,9 @@ void reset_player(player* p, int posX, int posY){
     p->nbPieces = 0;
     p->xp = 0;
     for(int i = 0; i < 5; i++){
+        if(p->listArtefact[i] != NULL){
+            supprimer_artefact(p->listArtefact[i]);
+        }
         p->listArtefact[i] = NULL;
     }
     p->posX = posX;
