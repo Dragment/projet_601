@@ -2,7 +2,6 @@
 #define _PLAYER_H
 
 #include "artefact.h"
-#include <pthread.h>
 
 typedef struct player{
     int pv, pvMax, armure, force, vitesse_attaque, vitesse_deplacement, nbPieces, xp;
