@@ -1,1 +1,0 @@
-Ajouter message: "appuyer sur q pour sauvegarder" dans éditeur

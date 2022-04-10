@@ -1,0 +1,7 @@
+Compilation : make
+Execution :
+	- Etape 1 : Lancement du serveur => ./serveur 8080 ./maps
+	- Etape 2-n : Lancement d'un client => ./client 127.0.0.1 8080
+
+Supprimer tout les .o: make cleanOBJ
+Supprimer .o et exécutables: make clean
