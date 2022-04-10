@@ -5,8 +5,8 @@
 #include <stdio.h>
 
 #define nbMonstreDifferents 2 // Nombre de variétés de monstres différents
-monstre gobelin = {"Gobelin", 10, 2, 3, 4, 5, 10, 0, 0};
-monstre orc = {"Orc", 20, 5, 8, 2, 2, 25, 0, 0};
+monstre gobelin = {"Gobelin", 10, 1, 1, 2, 3, 25, 0, 0, -1};
+monstre orc = {"Orc", 20, 3, 3, 2, 2, 75, 0, 0, -1};
 monstre* listMonstreExistant[nbMonstreDifferents] = {&gobelin, &orc};
 
 monstre* creer_monstre(int posX, int posY){

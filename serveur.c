@@ -74,6 +74,9 @@ void* player_thread(void* arg){
             reponse_map_et_player rmp;
             rmp.m = m;
             rmp.p = tempP;
+            for(int i = 0; i<5; i++){
+                rmp.listArtefact[i] = getCharArtefact(p->listArtefact[i]);
+            }
             if(write(sockclient, &rmp, sizeof(reponse_map_et_player)) == -1) {
                 perror("Erreur lors de l'envoi de la première map ");
                 exit(EXIT_FAILURE);
@@ -106,6 +109,9 @@ void* player_thread(void* arg){
             reponse_map_et_player rmp;
             rmp.m = m;
             rmp.p = tempP;
+            for(int i = 0; i<5; i++){
+                rmp.listArtefact[i] = getCharArtefact(p->listArtefact[i]);
+            }
             if(write(sockclient, &rmp, sizeof(reponse_map_et_player)) == -1) {
                 perror("Erreur lors de l'envoi de la première map ");
                 exit(EXIT_FAILURE);
@@ -124,6 +130,9 @@ void* player_thread(void* arg){
             reponse_map_et_player rmp;
             rmp.m = m;
             rmp.p = tempP;
+            for(int i = 0; i<5; i++){
+                rmp.listArtefact[i] = getCharArtefact(p->listArtefact[i]);
+            }
             if(write(sockclient, &rmp, sizeof(reponse_map_et_player)) == -1) {
                 perror("Erreur lors de l'envoi de la première map ");
                 exit(EXIT_FAILURE);

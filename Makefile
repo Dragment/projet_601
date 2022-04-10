@@ -13,7 +13,7 @@ OUT1	= serveur
 
 OBJS2	= client.o map.o ncurses.o player.o artefact.o monstre.o
 SOURCE2	= client.c map.c ncurses.c player.c artefact.c monstre.c
-HEADER2	= requete.h map.h ncurses.h player.h artefact.h monstre.h
+HEADER2	= requete.h map.h ncurses.h player.h artefact.h monstre.h listeArtefact.h
 OUT2	= client
 
 CC	 = gcc
