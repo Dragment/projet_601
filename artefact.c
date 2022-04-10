@@ -16,6 +16,7 @@ artefact artefact_tigre = {"Artefact du Tigre", -5, 0, 3, 0, 3};
 artefact artefact_fleur = {"Artefact de la Fleur", 5, -1, 2, 0, 0};
 artefact artefact_bougre = {"Artefact du Bougre", -5, -5, -5, -5, -5};
 artefact* listArtefactExistant[nbArtefactDifferents] = {&artefact_vie, &artefact_armure, &artefact_force, &artefact_vit_att, &artefact_vit_dep, &artefact_roi_rablite, &artefact_chef_delinquant, &artefact_tigre, &artefact_fleur, &artefact_bougre};
+
 artefact* creer_artefact(){
     artefact* a = malloc(sizeof(artefact));
     srand(time(NULL));
