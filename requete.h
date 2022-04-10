@@ -6,6 +6,7 @@
 #define MOVE 2
 #define DECONNEXION 3
 #define ACTUALISER 4
+#define DROP_ARTEFACT 5
 
 typedef struct requete{
     int map_x, map_y, playerId, commande;

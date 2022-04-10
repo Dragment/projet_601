@@ -617,3 +617,28 @@ void mort_player_world_map(completeMap* m, int x, int y){
     m->map->list_case[x][y].element = MAP_VIDE;
     pthread_mutex_unlock(&m->mutex);
 }
+
+int drop_artefact_world_map(completeMap* m, artefact* a, int x, int y){
+    if(x+1 < 40 && m->map->list_case[x+1][y].background != MAP_WATER && m->map->list_case[x+1][y].element == MAP_VIDE){
+        m->map->list_case[x+1][y].element = MAP_ARTIFACT;
+        m->map->list_case[x+1][y].artefact = a;
+        ajouter_artefact(m, a);
+        return 1;
+    }else if(x-1 >= 0 && m->map->list_case[x-1][y].background != MAP_WATER && m->map->list_case[x-1][y].element == MAP_VIDE){
+        m->map->list_case[x-1][y].element = MAP_ARTIFACT;
+        m->map->list_case[x-1][y].artefact = a;
+        ajouter_artefact(m, a);
+        return 1;
+    }else if(y-1 >= 0 && m->map->list_case[x][y-1].background != MAP_WATER && m->map->list_case[x][y-1].element == MAP_VIDE){
+        m->map->list_case[x][y-1].element = MAP_ARTIFACT;
+        m->map->list_case[x][y-1].artefact = a;
+        ajouter_artefact(m, a);
+        return 1;
+    }else if(y+1 < 20 && m->map->list_case[x][y+1].background != MAP_WATER && m->map->list_case[x][y+1].element == MAP_VIDE){
+        m->map->list_case[x][y+1].element = MAP_ARTIFACT;
+        m->map->list_case[x][y+1].artefact = a;
+        ajouter_artefact(m, a);
+        return 1;
+    }
+    return 0;
+}

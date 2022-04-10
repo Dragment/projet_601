@@ -99,4 +99,6 @@ void pvp(player* p, player* m);
 
 void mort_player_world_map(completeMap* m, int x, int y);
 
+int drop_artefact_world_map(completeMap* m, artefact* a, int x, int y);
+
 #endif
