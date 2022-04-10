@@ -15,6 +15,7 @@ typedef struct requete{
 typedef struct reponse_map_et_player{
     map m;
     player p;
+    char listArtefact[5];
 }reponse_map_et_player;
 
 #endif

@@ -8,6 +8,8 @@ typedef struct artefact{
 
 artefact* creer_artefact();
 void supprimer_artefact(artefact* a);
+char getCharArtefact(artefact *a);
+char* getArtefactNameFromChar(char c);
 
 
 

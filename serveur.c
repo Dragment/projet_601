@@ -59,6 +59,15 @@ void* player_thread(void* arg){
     requete requeteClient;
     int demandeDeco = 0;
     while(stop == 0 && demandeDeco == 0){
+        // Vérifier si on doit respawn le joueur
+        if(p->pv <= 0){
+            mort_player_world_map(get_or_create_complete_map(&worldMap, player_map_x, player_map_y), p->posX, p->posY); // Supprimer joueur de la carte
+            trouver_lieu_spawn(&worldMap, &spawn_x, &spawn_y); // Trouver ou spawn le joueur
+            reset_player(p, spawn_x, spawn_y); // reset stats joueur
+            player_map_x = 0; // Placer joueur map de base
+            player_map_y = 0;
+        }
+
         if(read(sockclient, &requeteClient, sizeof(requete)) == -1) {
             perror("Erreur lors de la demande TCP ");
             exit(EXIT_FAILURE);
@@ -74,6 +83,9 @@ void* player_thread(void* arg){
             reponse_map_et_player rmp;
             rmp.m = m;
             rmp.p = tempP;
+            for(int i = 0; i<5; i++){
+                rmp.listArtefact[i] = getCharArtefact(p->listArtefact[i]);
+            }
             if(write(sockclient, &rmp, sizeof(reponse_map_et_player)) == -1) {
                 perror("Erreur lors de l'envoi de la première map ");
                 exit(EXIT_FAILURE);
@@ -106,12 +118,16 @@ void* player_thread(void* arg){
             reponse_map_et_player rmp;
             rmp.m = m;
             rmp.p = tempP;
+            for(int i = 0; i<5; i++){
+                rmp.listArtefact[i] = getCharArtefact(p->listArtefact[i]);
+            }
             if(write(sockclient, &rmp, sizeof(reponse_map_et_player)) == -1) {
                 perror("Erreur lors de l'envoi de la première map ");
                 exit(EXIT_FAILURE);
             }
         }else if(requeteClient.commande == DECONNEXION){
-            //TODO: Supprimer player et player sur map
+            mort_player_world_map(get_or_create_complete_map(&worldMap, player_map_x, player_map_y), p->posX, p->posY);
+            supprimer_player(p);
             int rep = 1;
             if(write(sockclient, &rep, sizeof(int)) == -1) {
                 perror("Erreur lors de la réponse de déco ");
@@ -124,6 +140,9 @@ void* player_thread(void* arg){
             reponse_map_et_player rmp;
             rmp.m = m;
             rmp.p = tempP;
+            for(int i = 0; i<5; i++){
+                rmp.listArtefact[i] = getCharArtefact(p->listArtefact[i]);
+            }
             if(write(sockclient, &rmp, sizeof(reponse_map_et_player)) == -1) {
                 perror("Erreur lors de l'envoi de la première map ");
                 exit(EXIT_FAILURE);

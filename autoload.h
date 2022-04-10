@@ -15,3 +15,4 @@
 #include "map.h"
 #include "worldMap.h"
 #include "requete.h"
+#include "artefact.h"

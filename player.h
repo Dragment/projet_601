@@ -16,5 +16,6 @@ void supprimer_player(player*);
 int getNbArtefact(player* p);
 void ramasserArtefact(player* p, artefact* a);
 void ouvrirTresor(player* p);
+void reset_player(player* p, int posX, int posY);
 
 #endif

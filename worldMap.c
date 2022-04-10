@@ -369,13 +369,11 @@ void playerMove(worldMapList* wm, completeMap* m, player* p, char mv, int* map_x
         }
     }
 
-    if (nouvelleCase->background != MAP_WATER && nouvelleCase->element != MAP_PLAYER
-        && nouvelleCase->element != MAP_MONSTER && nouvelleCase->element != MAP_OBSTACLE){
+    if (nouvelleCase->background != MAP_WATER && nouvelleCase->element != MAP_OBSTACLE){
 
         // Ancienne case
         case_map* ancienneCase = &m->map->list_case[p->posX][p->posY];
 
-        // TODO : Vérifier si item au sol (interdire si set artefacts rempli ou trop de pièces du grand tout et obtenir item au sol avant de se déplacer)
         if(nouvelleCase->element == MAP_ARTIFACT){
             if(getNbArtefact(p) < 5){
                 ramasserArtefact(p, nouvelleCase->artefact);
@@ -407,6 +405,18 @@ void playerMove(worldMapList* wm, completeMap* m, player* p, char mv, int* map_x
                 if(changeMap == 1){ // Changer map pour le player
                     *map_x_player = newMap->x;
                     *map_y_player = newMap->y;
+                }
+            }
+        }else if(nouvelleCase->element == MAP_MONSTER || nouvelleCase->element == MAP_PLAYER){
+            if(changeMap == 0){ // On ne peux pas combattre sur une autre map
+                if(nouvelleCase->element == MAP_MONSTER){
+                    pve(p, nouvelleCase->monstre);
+                    if(nouvelleCase->monstre->pv<=0){ // Si le monstre est mort il dépop
+                        nouvelleCase->monstre = NULL;
+                        nouvelleCase->element = MAP_TRESOR;
+                    }
+                }else if(nouvelleCase->element == MAP_PLAYER){
+                    pvp(p, nouvelleCase->player);
                 }
             }
         }else{
@@ -483,6 +493,8 @@ void monsterMove(completeMap* m, monstre* monster){
                         && m->map->list_case[monster->posX][monster->posY-1].element != MAP_MONSTER){
                             m->map->list_case[monster->posX][monster->posY].element = MAP_VIDE;
                             m->map->list_case[monster->posX][monster->posY-1].element = MAP_MONSTER;
+                            m->map->list_case[monster->posX][monster->posY].monstre = NULL;
+                            m->map->list_case[monster->posX][monster->posY-1].monstre = monster;
                             monster->posY--;
                         }/*else{ // Joueur ou monstre dessus
                             // TODO : attaquer() l'entité sur la case
@@ -503,6 +515,8 @@ void monsterMove(completeMap* m, monstre* monster){
                         && m->map->list_case[monster->posX][monster->posY+1].element != MAP_MONSTER){
                             m->map->list_case[monster->posX][monster->posY].element = MAP_VIDE;
                             m->map->list_case[monster->posX][monster->posY+1].element = MAP_MONSTER;
+                            m->map->list_case[monster->posX][monster->posY].monstre = NULL;
+                            m->map->list_case[monster->posX][monster->posY+1].monstre = monster;
                             monster->posY++;
                         }/*else{ // Joueur ou monstre dessus
                             // TODO : attaquer() l'entité sur la case
@@ -523,6 +537,8 @@ void monsterMove(completeMap* m, monstre* monster){
                         && m->map->list_case[monster->posX+1][monster->posY].element != MAP_MONSTER){
                             m->map->list_case[monster->posX][monster->posY].element = MAP_VIDE;
                             m->map->list_case[monster->posX+1][monster->posY].element = MAP_MONSTER;
+                            m->map->list_case[monster->posX][monster->posY].monstre = NULL;
+                            m->map->list_case[monster->posX+1][monster->posY].monstre = monster;
                             monster->posX++;
                         }/*else{ // Joueur ou monstre dessus
                             // TODO : attaquer() l'entité sur la case
@@ -543,6 +559,8 @@ void monsterMove(completeMap* m, monstre* monster){
                         && m->map->list_case[monster->posX-1][monster->posY].element != MAP_MONSTER){
                             m->map->list_case[monster->posX][monster->posY].element = MAP_VIDE;
                             m->map->list_case[monster->posX-1][monster->posY].element = MAP_MONSTER;
+                            m->map->list_case[monster->posX][monster->posY].monstre = NULL;
+                            m->map->list_case[monster->posX-1][monster->posY].monstre = monster;
                             monster->posX--;
                         }/*else{ // Joueur ou monstre dessus
                             // TODO : attaquer() l'entité sur la case
@@ -572,6 +590,10 @@ void pve(player* p, monstre* m){
     int degPlayer =  (int)((m->force * m->vitesse_attaque * m->vitesse_deplacement)/(p->armure * p->vitesse_deplacement)) +1;
     m->pv = m->pv - degMonstre;
     p->pv = p->pv - degPlayer;
+    if(m->pv <= 0){
+        p->xp = p->xp + m->xp;
+        upStats(p);
+    }
 }
 
 void pvp(player* p, player* m){
@@ -579,4 +601,19 @@ void pvp(player* p, player* m){
     int degPlayer =  (int)((m->force * m->vitesse_attaque * m->vitesse_deplacement)/(p->armure * p->vitesse_deplacement)) +1;
     m->pv = m->pv - degP2;
     p->pv = p->pv - degPlayer;
+    if(m->pv <= 0){
+        p->xp = p->xp + 100;
+        upStats(p);
+    }
+    if(p->pv <= 0){
+        m->xp = m->xp + 100;
+        upStats(m);
+    }
+}
+
+void mort_player_world_map(completeMap* m, int x, int y){
+    pthread_mutex_lock(&m->mutex);
+    m->map->list_case[x][y].player = NULL;
+    m->map->list_case[x][y].element = MAP_VIDE;
+    pthread_mutex_unlock(&m->mutex);
 }
