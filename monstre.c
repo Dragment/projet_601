@@ -28,6 +28,7 @@ monstre* creer_monstre(int posX, int posY){
 }
 
 void supprimer_monstre(monstre* m){
+    m->pv = 0; // Pour arreter le thread
     if(pthread_join(m->threadId, NULL) != 0){
         fprintf(stderr, "Erreur join thread monstre.\n");
     }

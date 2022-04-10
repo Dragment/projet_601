@@ -94,4 +94,7 @@ void monsterMove(completeMap* m, monstre* monster);
 
 void* monsterMove_routine(void* arg);
 
+void pve(player* p, monstre* m);
+void pvp(player* p, player* m);
+
 #endif

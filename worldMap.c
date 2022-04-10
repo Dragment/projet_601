@@ -566,3 +566,17 @@ void* monsterMove_routine(void* arg){
     monsterMove(args->m, args->mon);
     pthread_exit(NULL);
 }
+
+void pve(player* p, monstre* m){
+    int degMonstre = (int)((p->force * p->vitesse_attaque * p->vitesse_deplacement)/(m->armure * m->vitesse_deplacement)) +1;
+    int degPlayer =  (int)((m->force * m->vitesse_attaque * m->vitesse_deplacement)/(p->armure * p->vitesse_deplacement)) +1;
+    m->pv = m->pv - degMonstre;
+    p->pv = p->pv - degPlayer;
+}
+
+void pvp(player* p, player* m){
+    int degP2 = (int)((p->force * p->vitesse_attaque * p->vitesse_deplacement)/(m->armure * m->vitesse_deplacement)) +1;
+    int degPlayer =  (int)((m->force * m->vitesse_attaque * m->vitesse_deplacement)/(p->armure * p->vitesse_deplacement)) +1;
+    m->pv = m->pv - degP2;
+    p->pv = p->pv - degPlayer;
+}
