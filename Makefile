@@ -28,10 +28,10 @@ editeur: $(OBJS0) $(LFLAGS)
 	$(CC) -g $(OBJS0) -o $(OUT0) $(LFLAGS)
 
 serveur: $(OBJS1) $(LFLAGS)
-	$(CC) -g $(OBJS1) -o $(OUT1)
+	$(CC) -g $(OBJS1) -o $(OUT1) $(LFLAGS2)
 
 client: $(OBJS2) $(LFLAGS)
-	$(CC) -g $(OBJS2) -o $(OUT2) $(LFLAGS)
+	$(CC) -g $(OBJS2) -o $(OUT2) $(LFLAGS) $(LFLAGS2)
 
 editeur.o: editeur.c
 	$(CC) $(FLAGS) editeur.c 

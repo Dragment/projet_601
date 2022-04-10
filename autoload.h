@@ -8,6 +8,8 @@
 #include <signal.h>
 #include <errno.h>
 #include <sys/wait.h>
+#include <sys/msg.h>
+#include <sys/stat.h>
 
 #include "ncurses.h"
 #include "map.h"

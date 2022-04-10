@@ -163,6 +163,56 @@ void afficher_attributs(WINDOW* attributs, player p, char* nomJoueur){ // TODO: 
     wrefresh(attributs);
 }
 
+typedef struct arg_actualiserMap{
+    WINDOW* carte;
+    WINDOW* attributs;
+    int* map_x;
+    int* map_y;
+    int* playerId;
+    map* m;
+    player* p;
+    char* nomJoueur;
+    pthread_mutex_t mutex;
+    int socket;
+}arg_actualiserMap;
+
+void* actualisationMap(void* arg){
+    arg_actualiserMap* args = (arg_actualiserMap*)arg;
+    requete requete;
+    requete.playerId = *args->playerId;
+    while(stop == 0){
+        pthread_mutex_lock(&args->mutex);
+
+        requete.map_x = *args->map_x;
+        requete.map_y = *args->map_y;
+        requete.commande = ACTUALISER;
+
+        //Envoie requete
+        if(write(args->socket, &requete, sizeof(requete))== -1) {
+            perror("Erreur lors de l'envoi TCP ");
+            exit(EXIT_FAILURE);
+        }
+        //Réponse
+        reponse_map_et_player repmp;
+        if(read(args->socket, &repmp, sizeof(reponse_map_et_player)) == -1) {
+            perror("Erreur lors de la réception de la première map ");
+            exit(EXIT_FAILURE);
+        }
+
+        *args->m = repmp.m;
+        *args->p = repmp.p;
+
+        dessinner_map(args->carte, args->m);
+        afficher_attributs(args->attributs, *args->p, args->nomJoueur);
+
+        pthread_mutex_unlock(&args->mutex);
+
+        sleep(0.5);
+    }
+
+    pthread_exit(NULL);
+}
+
 int lancerJeu(int socket, char* nomJoueur){
     
     //Initialiser variables
@@ -171,7 +221,6 @@ int lancerJeu(int socket, char* nomJoueur){
     int playerId = getpid(); // L'identifiant du player sera le pid du processus client
     
     map* m = initialiser_map_vide();
-    // map* m;
 
     // Demander map au serveur
     requete requete;
@@ -186,7 +235,6 @@ int lancerJeu(int socket, char* nomJoueur){
     }
 
     // Lecture de la réponse du serveur
-    //if(read(socket, m, sizeof(map)) == -1) {
     reponse_map_et_player repmp;
     if(read(socket, &repmp, sizeof(reponse_map_et_player)) == -1) {
         perror("Erreur lors de la réception de la première map ");
@@ -255,13 +303,31 @@ int lancerJeu(int socket, char* nomJoueur){
     *m = repmp.m;
     dessinner_map(carte, m);
 
-    // Tant que q n'est pas apppuyé, on attends une saisie
-    // while(((ch = getch()) != 'q') && stop == 0) {
+    // Lancer thread actualisation
+    arg_actualiserMap arg;
+    arg.map_x = &map_x;
+    arg.map_y = &map_y;
+    arg.carte = carte;
+    arg.attributs = attributs;
+    arg.m = m;
+    arg.p = &p;
+    arg.playerId = &playerId;
+    arg.nomJoueur = nomJoueur;
+    pthread_mutex_init(&arg.mutex, NULL);
+    arg.socket = socket;
+
+    pthread_t threadId;
+    if(pthread_create(&threadId, NULL, actualisationMap, (void*)&arg) != 0){
+        fprintf(stderr, "Erreur lancement thread actualisation.\n");
+    }
+
     while((ch = getch()) && stop == 0) {
         // Les déplacements + espace
         if(ch == KEY_UP || ch == KEY_DOWN || ch == KEY_RIGHT || ch == KEY_LEFT || ch == ' '){
+            pthread_mutex_lock(&arg.mutex);
             requete.map_x = map_x;
             requete.map_y = map_y;
+            
             // PlayerId bouge pas
             requete.commande = MOVE;
 
@@ -293,11 +359,18 @@ int lancerJeu(int socket, char* nomJoueur){
             perror("Erreur lors de la réception de la première map ");
             exit(EXIT_FAILURE);
         }
+
         *m = repmp.m;
-        dessinner_map(carte, m);
-        player p = repmp.p;
-        afficher_attributs(attributs, p, nomJoueur);
+        *arg.p = repmp.p;
+
+        pthread_mutex_unlock(&arg.mutex);
     }
+
+    if(pthread_join(threadId, NULL) != 0){
+        fprintf(stderr, "Erreur join thread actualisation.\n");
+    }
+
+    pthread_mutex_destroy(&arg.mutex);
 
     // Quitter ncurses
     ncurses_stop();
@@ -391,6 +464,21 @@ int main(int argc, char *argv[]) {
 
     // Traitement
     lancerJeu(fd, name);
+
+    // Envoyer message fermeture flux tcp
+    requete requete;
+    requete.playerId = getpid();
+    requete.commande = DECONNEXION;
+    if(write(fd, &requete, sizeof(requete))== -1) {
+        perror("Erreur lors de l'envoi de déconnexion TCP ");
+        exit(EXIT_FAILURE);
+    }
+    //Réponse
+    int repDeco;
+    if(read(fd, &repDeco, sizeof(int)) == -1) {
+        perror("Erreur lors de la réception de la déconnexion TCP ");
+        exit(EXIT_FAILURE);
+    }
 
     // Fermeture de la socket
     if(close(fd) == -1) {
