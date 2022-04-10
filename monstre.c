@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
+#include <stdio.h>
 
 #define nbMonstreDifferents 2 // Nombre de variétés de monstres différents
 monstre gobelin = {"Gobelin", 10, 2, 3, 4, 5, 10, 0, 0};
@@ -27,6 +28,9 @@ monstre* creer_monstre(int posX, int posY){
 }
 
 void supprimer_monstre(monstre* m){
+    if(pthread_join(m->threadId, NULL) != 0){
+        fprintf(stderr, "Erreur join thread monstre.\n");
+    }
     free(m->name);
     free(m);
 }

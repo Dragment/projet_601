@@ -7,8 +7,17 @@
 #include "artefact.h"
 
 // Listes Chainées
+
+typedef struct completeMap completeMap;
+
+typedef struct monsterMove_arg{
+    completeMap* m;
+    monstre* mon;
+}monsterMove_arg;
+
 typedef struct listMonstre{
     monstre* monstre;
+    monsterMove_arg args;
     struct listMonstre* suiv;
 }listMonstre;
 
@@ -24,7 +33,7 @@ typedef struct listPlayer{
 
 
 // Map complete avec monstre et artefact
-typedef struct completeMap{
+struct completeMap{
     map* map;
     int x, y; // Coordonnées par rapport à la map globale de spawn
     pthread_mutex_t mutex;
@@ -43,7 +52,7 @@ typedef struct completeMap{
     // Partie pour la liste chainée de worldMapList
     struct completeMap* suiv;
 
-}completeMap;
+};
 
 // Liste de toute les maps générées
 typedef struct worldMapList{
@@ -82,5 +91,7 @@ void trouver_lieu_spawn(worldMapList* m, int* ret_x, int* ret_y);
 // Mouvement
 void playerMove(worldMapList* wm, completeMap* m, player* p, char mv, int* map_x_player, int* map_y_player);
 void monsterMove(completeMap* m, monstre* monster);
+
+void* monsterMove_routine(void* arg);
 
 #endif

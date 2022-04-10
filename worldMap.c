@@ -22,6 +22,8 @@ void ajouter_joueur(completeMap* m, player* p){
 void ajouter_monstre(completeMap* m, monstre* monstre){
     listMonstre* l = malloc(sizeof(listMonstre));
     l->monstre = monstre;
+    l->args.mon = monstre;
+    l->args.m = m;
     l->suiv = NULL;
     if(m->listMonstreTete == NULL){
         m->listMonstreTete = l;
@@ -49,6 +51,7 @@ void supprimer_list_monstre(completeMap* m){
     listMonstre* l = m->listMonstreTete;
     while(l != NULL){
         listMonstre* suiv = l->suiv;
+        l->monstre->pv = 0; // Permet de faire se couper le thread du monstre
         supprimer_monstre(l->monstre);
         free(l);
         l = suiv;
@@ -192,6 +195,17 @@ completeMap* generer_complete_map(int x, int y, char* repertoire){
         }
     }
     // fprintf(stderr, "CompleteMap: chargement monstre artefact ok\n");
+
+    // Lancer les threads de monstre
+    listMonstre* curMonstre = m->listMonstreTete;
+    listMonstre* suivMonstre = NULL;
+    while(curMonstre != NULL){
+        suivMonstre = curMonstre->suiv;
+        if(pthread_create(&curMonstre->monstre->threadId, NULL, monsterMove_routine, (void*)&curMonstre->args) != 0){
+            fprintf(stderr, "Erreur lancement thread actualisation.\n");
+        }
+        curMonstre = suivMonstre;
+    }
     return(m);
 }
 
@@ -545,4 +559,10 @@ void monsterMove(completeMap* m, monstre* monster){
         int sleeping = (int) 5 - 0.05*monster->vitesse_deplacement;
         sleep(sleeping + 1);
     }
+}
+
+void* monsterMove_routine(void* arg){
+    monsterMove_arg* args = (monsterMove_arg*)arg;
+    monsterMove(args->m, args->mon);
+    pthread_exit(NULL);
 }

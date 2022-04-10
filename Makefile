@@ -25,7 +25,7 @@ LFLAGS2  = -lpthread
 all: editeur serveur client
 
 editeur: $(OBJS0) $(LFLAGS)
-	$(CC) -g $(OBJS0) -o $(OUT0) $(LFLAGS)
+	$(CC) -g $(OBJS0) -o $(OUT0) $(LFLAGS) $(LFLAGS2)
 
 serveur: $(OBJS1) $(LFLAGS)
 	$(CC) -g $(OBJS1) -o $(OUT1) $(LFLAGS2)
@@ -49,7 +49,7 @@ artefact.o: artefact.c
 	$(CC) $(FLAGS) artefact.c 
 
 monstre.o: monstre.c
-	$(CC) $(FLAGS) monstre.c 
+	$(CC) $(FLAGS) monstre.c $(LFLAGS2)
 
 serveur.o: serveur.c
 	$(CC) $(FLAGS) serveur.c 
