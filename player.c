@@ -141,3 +141,25 @@ void reset_player(player* p, int posX, int posY){
     p->posX = posX;
     p->posY = posY;
 }
+
+void lacher_artefact(player* p, int numArtefact){
+    artefact* a = p->listArtefact[numArtefact];
+    p->pvMax = p->pvMax - a->pv;
+    if(p->pv > p->pvMax){
+        p->pv = p->pvMax;
+    }
+    p->armure = p->armure - a->armure;
+    p->force = p->force - a->force;
+    p->vitesse_attaque = p->vitesse_attaque - a->vitesse_attaque;
+    p->vitesse_deplacement = p->vitesse_deplacement - a->vitesse_deplacement;
+
+    // Remplire le trou dans la liste artefact
+    if(getNbArtefact(p) > 1){
+        artefact* dernierArtefact = p->listArtefact[getNbArtefact(p)-1];
+        p->listArtefact[numArtefact] = dernierArtefact;
+        p->listArtefact[getNbArtefact(p)-1] = NULL;
+    }else{
+        p->listArtefact[numArtefact] = NULL;
+    }
+    
+}

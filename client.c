@@ -157,10 +157,10 @@ void dessinner_map(WINDOW* fenetre, map* map){
     }
 }
 
-void afficher_attributs(WINDOW* attributs, player p, char* nomJoueur, char listNomArtefact[5]){ // TODO: afficher artefacts
+void afficher_attributs(WINDOW* attributs, player p, char* nomJoueur, char listNomArtefact[5]){
     wclear(attributs);
     wprintw(attributs, "Joueur :\n%s\n\nPV : %d/%d\nArmure : %d\nForce : %d\nVit atq : %d\nVit dep : %d\n\nXP : %d/100\nPieces : %d\n\nArtefacts :\n", nomJoueur, p.pv, p.pvMax, p.armure, p.force, p.vitesse_attaque, p.vitesse_deplacement, p.xp, p.nbPieces);
-    for(int i = 0; i < 5; i++){ // core dumped, on récupère mal les artefacts je pense FIXME:
+    for(int i = 0; i < 5; i++){
         wprintw(attributs, "%s\n", getArtefactNameFromChar(listNomArtefact[i])); 
     }
     wrefresh(attributs);
@@ -286,7 +286,6 @@ int lancerJeu(int socket, char* nomJoueur){
 
     // Ajout des valeurs dans attributs
     player p = repmp.p;
-    // TODO: Remplacer par les stats artefact
     afficher_attributs(attributs, p, nomJoueur, repmp.listArtefact);
 
     // Traitement des actions
@@ -350,6 +349,24 @@ int lancerJeu(int socket, char* nomJoueur){
                 // Espace
                 requete.option = 'S';
             }
+        }else if(ch == '1' || ch == '2' || ch == '3' || ch =='4' || ch == '5'){
+            pthread_mutex_lock(&arg.mutex);
+            requete.map_x = map_x;
+            requete.map_y = map_y;
+            
+            requete.commande = DROP_ARTEFACT;
+            if(ch == '1'){
+                requete.option = '1';
+            }else if(ch == '2'){
+                requete.option = '2';
+            }else if(ch == '3'){
+                requete.option = '3';
+            }else if(ch == '4'){
+                requete.option = '4';
+            }else if(ch == '5'){
+                requete.option = '5';
+            }
+
         }
         //Envoie requete
         if(write(socket, &requete, sizeof(requete))== -1) {

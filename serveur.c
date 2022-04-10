@@ -147,6 +147,41 @@ void* player_thread(void* arg){
                 perror("Erreur lors de l'envoi de la première map ");
                 exit(EXIT_FAILURE);
             }
+        }else if(requeteClient.commande == DROP_ARTEFACT){
+            // Récupérer le nb de l'artefact
+            int numArtefact = -1;
+            if(requeteClient.option == '1'){
+                numArtefact = 0;
+            }else if(requeteClient.option == '2'){
+                numArtefact = 1;
+            }else if(requeteClient.option == '3'){
+                numArtefact = 2;
+            }else if(requeteClient.option == '4'){
+                numArtefact = 3;
+            }else if(requeteClient.option == '5'){
+                numArtefact = 4;
+            }
+
+            // Drop artefact
+            if(numArtefact != -1 && p->listArtefact[numArtefact] != NULL){
+                fprintf(stderr, "Lacher artefact %s\n", p->listArtefact[numArtefact]->name);
+                if(drop_artefact_world_map(get_or_create_complete_map(&worldMap, player_map_x, player_map_y), p->listArtefact[numArtefact], p->posX, p->posY) == 1){
+                    lacher_artefact(p, numArtefact);
+                }
+            }
+
+            map m = *(get_or_create_complete_map(&worldMap, player_map_x, player_map_y)->map);
+            player tempP = *p;
+            reponse_map_et_player rmp;
+            rmp.m = m;
+            rmp.p = tempP;
+            for(int i = 0; i<5; i++){
+                rmp.listArtefact[i] = getCharArtefact(p->listArtefact[i]);
+            }
+            if(write(sockclient, &rmp, sizeof(reponse_map_et_player)) == -1) {
+                perror("Erreur lors de l'envoi de la première map ");
+                exit(EXIT_FAILURE);
+            }
         }
     }
 
