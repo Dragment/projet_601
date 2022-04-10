@@ -42,7 +42,7 @@ void* player_thread(void* arg){
 
     // Trouver ou placer le player et le placer
     int spawn_x, spawn_y;
-    trouver_lieu_spawn(worldMap, &spawn_x, &spawn_y);
+    trouver_lieu_spawn(&worldMap, &spawn_x, &spawn_y);
     player* p = initNewPlayer(buffer, spawn_x, spawn_y);
     printf("Connexion de %s\n", p->nom);
     // Ajouter le joueur a la liste des joueurs de la map 0, 0
@@ -69,7 +69,7 @@ void* player_thread(void* arg){
             playerId = requeteClient.playerId;
             printf("Envoie de la première map à %d\n", playerId);
             // marche pas si on fait juste => map* map = get_or_create_complete_map(worldMap, player_map_x, player_map_y)->map;
-            map m = *(get_or_create_complete_map(worldMap, player_map_x, player_map_y)->map);
+            map m = *(get_or_create_complete_map(&worldMap, player_map_x, player_map_y)->map);
             player tempP = *p;
             reponse_map_et_player rmp;
             rmp.m = m;
@@ -82,16 +82,16 @@ void* player_thread(void* arg){
             switch (requeteClient.option)
             {
             case 'U':
-                playerMove(get_or_create_complete_map(worldMap, player_map_x, player_map_y), p, 'U');
+                playerMove(&worldMap, get_or_create_complete_map(&worldMap, player_map_x, player_map_y), p, 'U', &player_map_x, &player_map_y);
                 break;
             case 'D':
-                playerMove(get_or_create_complete_map(worldMap, player_map_x, player_map_y), p, 'D');
+                playerMove(&worldMap, get_or_create_complete_map(&worldMap, player_map_x, player_map_y), p, 'D', &player_map_x, &player_map_y);
                 break;
             case 'R':
-                playerMove(get_or_create_complete_map(worldMap, player_map_x, player_map_y), p, 'R');
+                playerMove(&worldMap, get_or_create_complete_map(&worldMap, player_map_x, player_map_y), p, 'R', &player_map_x, &player_map_y);
                 break;
             case 'L':
-                playerMove(get_or_create_complete_map(worldMap, player_map_x, player_map_y), p, 'L');
+                playerMove(&worldMap, get_or_create_complete_map(&worldMap, player_map_x, player_map_y), p, 'L', &player_map_x, &player_map_y);
                 break;
             case ' ':
                 /* code */ // TODO: Pièce du grand tout
@@ -101,7 +101,7 @@ void* player_thread(void* arg){
                 break;
             }
             // Réponse
-            map m = *(get_or_create_complete_map(worldMap, player_map_x, player_map_y)->map);
+            map m = *(get_or_create_complete_map(&worldMap, player_map_x, player_map_y)->map);
             player tempP = *p;
             reponse_map_et_player rmp;
             rmp.m = m;
@@ -111,6 +111,7 @@ void* player_thread(void* arg){
                 exit(EXIT_FAILURE);
             }
         }else if(requeteClient.commande == DECONNEXION){
+            //TODO: Supprimer player et player sur map
             int rep = 1;
             if(write(sockclient, &rep, sizeof(int)) == -1) {
                 perror("Erreur lors de la réponse de déco ");
@@ -118,7 +119,7 @@ void* player_thread(void* arg){
             }
             demandeDeco = 1;
         }else if(requeteClient.commande == ACTUALISER){
-            map m = *(get_or_create_complete_map(worldMap, player_map_x, player_map_y)->map);
+            map m = *(get_or_create_complete_map(&worldMap, player_map_x, player_map_y)->map);
             player tempP = *p;
             reponse_map_et_player rmp;
             rmp.m = m;

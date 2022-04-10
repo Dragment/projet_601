@@ -13,5 +13,8 @@ typedef struct player{
 player* initNewPlayer(char*, int, int);
 void upStats(player*);
 void supprimer_player(player*);
+int getNbArtefact(player* p);
+void ramasserArtefact(player* p, artefact* a);
+void ouvrirTresor(player* p);
 
 #endif

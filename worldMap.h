@@ -61,6 +61,10 @@ void delete_complete_map(completeMap* m);
 void ajouter_monstre(completeMap* m, monstre* monstre);
 void ajouter_artefact(completeMap* m, artefact* a);
 void ajouter_joueur(completeMap* m, player* p);
+// Supprimer item
+void supprimer_artefact_complete_map(completeMap* m, artefact* a);
+void supprimer_monstre_complete_map(completeMap* m, monstre* mon);
+void supprimer_player_complete_map(completeMap* m, player* p);
 // Supprimer les listes
 void supprimer_list_monstre(completeMap* m);
 void supprimer_list_artefact(completeMap* m);
@@ -72,11 +76,11 @@ worldMapList init_world_map(char* repertoire);
 // Détruire la worldMap
 void delete_world_map(worldMapList m);
 // Récupérer completeMap x, y ou la créer si elle n'existe pas encore
-completeMap* get_or_create_complete_map(worldMapList m ,int x, int y);
-void trouver_lieu_spawn(worldMapList m, int* ret_x, int* ret_y);
+completeMap* get_or_create_complete_map(worldMapList* m ,int x, int y);
+void trouver_lieu_spawn(worldMapList* m, int* ret_x, int* ret_y);
 
 // Mouvement
-void playerMove(completeMap* m, player* p, char mv);
+void playerMove(worldMapList* wm, completeMap* m, player* p, char mv, int* map_x_player, int* map_y_player);
 void monsterMove(completeMap* m, monstre* monster);
 
 #endif

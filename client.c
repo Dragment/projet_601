@@ -159,7 +159,12 @@ void dessinner_map(WINDOW* fenetre, map* map){
 
 void afficher_attributs(WINDOW* attributs, player p, char* nomJoueur){ // TODO: afficher artefacts
     wclear(attributs);
-    wprintw(attributs, "Joueur :\n%s\n\nPV : %d/%d\nArmure : %d\nForce : %d\nVit atq : %d\nVit dep : %d\n\nXP : %d/100\nPieces : %d", nomJoueur, p.pv, p.pvMax, p.armure, p.force, p.vitesse_attaque, p.vitesse_deplacement, p.xp, p.nbPieces);
+    wprintw(attributs, "Joueur :\n%s\n\nPV : %d/%d\nArmure : %d\nForce : %d\nVit atq : %d\nVit dep : %d\n\nXP : %d/100\nPieces : %d\n\nArtefacts :\n", nomJoueur, p.pv, p.pvMax, p.armure, p.force, p.vitesse_attaque, p.vitesse_deplacement, p.xp, p.nbPieces);
+    // for(int i = 0; i < 5; i++){ // core dumped, on récupère mal les artefacts je pense FIXME:
+    //     if(p.listArtefact[i] != NULL){
+    //         wprintw(attributs, "%s\n", p.listArtefact[i]); 
+    //     }
+    // }
     wrefresh(attributs);
 }
 
