@@ -13,7 +13,8 @@ player* initNewPlayer(char* nom, int posX, int posY){
     p->vitesse_deplacement = 1;
     p->nbPieces = 0;
     p->xp = 0;
-    p->nom[21] = nom;
+    p->nom = malloc(sizeof(char)*strlen(nom));
+    strcpy(p->nom, nom);
     for(int i = 0; i < 5; i++){
         p->listArtefact[i] = NULL;
     }
@@ -23,6 +24,7 @@ player* initNewPlayer(char* nom, int posX, int posY){
 }
 
 void supprimer_player(player* p){
+    free(p->nom);
     free(p);
 }
 

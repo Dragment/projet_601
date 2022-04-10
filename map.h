@@ -42,7 +42,7 @@ int charger_map(map*, int);
 int enregistrer_edit_map(map*, int);
 char typeCase(map*, int, int);
 int typeCaseDecompression(char, int);
-char* compresserMap(map*);
-void decompresserMap(char*, map*);
+// char* compresserMap(map*);
+// void decompresserMap(char*, map*);
 
 #endif

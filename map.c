@@ -167,7 +167,7 @@ int enregistrer_edit_map(map* map, int numMap){
     return EXIT_SUCCESS;
 }
 
-char typeCase(map* m, int x, int y){
+/*char typeCase(map* m, int x, int y){
     char c = "";
     
     switch(m->list_case[x][y].element){
@@ -293,4 +293,4 @@ void decompresserMap(char* mStr, map* m){   // Permet de reproduire le visuel d'
         }
         curr++;
     }
-}
+}*/
