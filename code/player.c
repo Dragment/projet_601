@@ -153,7 +153,7 @@ void lacher_artefact(player* p, int numArtefact){
     p->vitesse_attaque = p->vitesse_attaque - a->vitesse_attaque;
     p->vitesse_deplacement = p->vitesse_deplacement - a->vitesse_deplacement;
 
-    // Remplire le trou dans la liste artefact
+    // Remplir le trou dans la liste artefact
     if(getNbArtefact(p) > 1){
         artefact* dernierArtefact = p->listArtefact[getNbArtefact(p)-1];
         p->listArtefact[numArtefact] = dernierArtefact;

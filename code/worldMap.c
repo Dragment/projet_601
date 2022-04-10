@@ -51,7 +51,7 @@ void supprimer_list_monstre(completeMap* m){
     listMonstre* l = m->listMonstreTete;
     while(l != NULL){
         listMonstre* suiv = l->suiv;
-        l->monstre->pv = 0; // Permet de faire se couper le thread du monstre
+        l->monstre->pv = 0; // Permet de couper le thread du monstre
         supprimer_monstre(l->monstre);
         free(l);
         l = suiv;
@@ -132,7 +132,7 @@ completeMap* generer_complete_map(int x, int y, char* repertoire){
     completeMap* m = malloc(sizeof(completeMap));
     m->x = x;
     m->y = y;
-    pthread_mutex_init(&m->mutex, NULL);    // TODO : Rajouter vérification "if ... != ..."
+    pthread_mutex_init(&m->mutex, NULL);
 
     // Initialiser les listes
     m->listMonstreTete = NULL;
@@ -171,7 +171,7 @@ completeMap* generer_complete_map(int x, int y, char* repertoire){
     charger_map(m->map, nbMap);
     // fprintf(stderr, "CompleteMap: Chargement map ok \n");
 
-    // Remplire les listes artefact et monstre (si on créer la map pas de héro présent)
+    // Remplir les listes d'artefacts et monstres (si on crée la map pas de héros présent)
     // Pour chaque case de la map
     // fprintf(stderr, "CompleteMap: charger monstre et artefact\n");
     case_map* c;
@@ -181,7 +181,7 @@ completeMap* generer_complete_map(int x, int y, char* repertoire){
             // si monstre ou artefact le créer et le placer dans la case et dans la liste
             if(c->element == MAP_MONSTER){
                 // fprintf(stderr, "CompleteMap: monstre\n");
-                c->monstre = creer_monstre(x, y); // TODO: On a modif la fonction, vérifier que ça marche toujours
+                c->monstre = creer_monstre(x, y);
                 // fprintf(stderr, "   CompleteMap: creer monstre ok\n");
                 ajouter_monstre(m, c->monstre);
                 // fprintf(stderr, "   CompleteMap: ajout monstre ok\n");
@@ -213,7 +213,7 @@ void delete_complete_map(completeMap* m){
     supprimer_list_monstre(m);
     supprimer_list_artefact(m);
     supprimer_list_player(m);
-    pthread_mutex_destroy(&m->mutex);   // TODO : Rajouter vérification "if ... != ..."
+    pthread_mutex_destroy(&m->mutex);
 
     supprimer_map(m->map);
     free(m);
@@ -287,7 +287,7 @@ void trouver_lieu_spawn(worldMapList* m, int* ret_x, int* ret_y){
 }
 
 void playerMove(worldMapList* wm, completeMap* m, player* p, char mv, int* map_x_player, int* map_y_player){
-    // Pour éviter vérrous mortelles on bloque déjà la map avec le plus petit x ou si x sont égaux le plus petit y
+    // Pour éviter verrous mortels on bloque déjà la map avec le plus petit x ou si x sont égaux le plus petit y
 
     // Vérifier si on change de carte
     int changeMap = 0;
@@ -324,7 +324,7 @@ void playerMove(worldMapList* wm, completeMap* m, player* p, char mv, int* map_x
     case_map* nouvelleCase;
     // Partie avec changement de map
     if(changeMap == 1){
-        if(mv == 'L' || mv == 'D'){ // Pour éviter vérrous mortelles on bloque déjà la map avec le plus petit x ou si x sont égaux le plus petit y
+        if(mv == 'L' || mv == 'D'){ // Pour éviter verrous mortels on bloque déjà la map avec le plus petit x ou si x sont égaux le plus petit y
             pthread_mutex_lock(&newMap->mutex);
             pthread_mutex_lock(&m->mutex);
         }else{
@@ -388,7 +388,7 @@ void playerMove(worldMapList* wm, completeMap* m, player* p, char mv, int* map_x
                 ancienneCase->player = NULL;
                 switch(mv){
                     case 'U':
-                        p->posY = (p->posY+19)%20; // Calcule avec modulo pour gérer changement de map (+19 == -1 au modulo 20)
+                        p->posY = (p->posY+19)%20; // Calcul avec modulo pour gérer changement de map (+19 == -1 au modulo 20)
                         break;
                     case 'D':
                         p->posY = (p->posY+1)%20;
@@ -408,7 +408,7 @@ void playerMove(worldMapList* wm, completeMap* m, player* p, char mv, int* map_x
                 }
             }
         }else if(nouvelleCase->element == MAP_MONSTER || nouvelleCase->element == MAP_PLAYER){
-            if(changeMap == 0){ // On ne peux pas combattre sur une autre map
+            if(changeMap == 0){ // On ne peut pas combattre sur une autre map
                 if(nouvelleCase->element == MAP_MONSTER){
                     pve(p, nouvelleCase->monstre);
                     if(nouvelleCase->monstre->pv<=0){ // Si le monstre est mort il dépop
@@ -456,7 +456,7 @@ void playerMove(worldMapList* wm, completeMap* m, player* p, char mv, int* map_x
 
     //Unlock des mutex
     if(changeMap == 1){
-        if(mv == 'L' || mv == 'D'){ // Pour éviter vérrous mortelles on bloque déjà la map avec le plus petit x ou si x sont égaux le plus petit y
+        if(mv == 'L' || mv == 'D'){ // Pour éviter verrous mortels on bloque déjà la map avec le plus petit x ou si x sont égaux le plus petit y
             pthread_mutex_unlock(&m->mutex);
             pthread_mutex_unlock(&newMap->mutex);
         }else{
@@ -478,7 +478,6 @@ void monsterMove(completeMap* m, monstre* monster){
         pthread_mutex_lock(&m->mutex);
 
         switch(cas){
-            // TODO : si case avec joueur ou monstre => attaque
             // TODO : faire attention à l'activation des pièces du Grand-Tout
             case 0:     // UP => Il faut que le monstre soit à y = 0 au minimum (sinon il sort du tableau de positions)
                 // Case dans la map
@@ -496,9 +495,7 @@ void monsterMove(completeMap* m, monstre* monster){
                             m->map->list_case[monster->posX][monster->posY].monstre = NULL;
                             m->map->list_case[monster->posX][monster->posY-1].monstre = monster;
                             monster->posY--;
-                        }/*else{ // Joueur ou monstre dessus
-                            // TODO : attaquer() l'entité sur la case
-                        }*/
+                        }
                     }
                 }
                 break;
@@ -518,9 +515,7 @@ void monsterMove(completeMap* m, monstre* monster){
                             m->map->list_case[monster->posX][monster->posY].monstre = NULL;
                             m->map->list_case[monster->posX][monster->posY+1].monstre = monster;
                             monster->posY++;
-                        }/*else{ // Joueur ou monstre dessus
-                            // TODO : attaquer() l'entité sur la case
-                        }*/
+                        }
                     }
                 }
                 break;
@@ -540,9 +535,7 @@ void monsterMove(completeMap* m, monstre* monster){
                             m->map->list_case[monster->posX][monster->posY].monstre = NULL;
                             m->map->list_case[monster->posX+1][monster->posY].monstre = monster;
                             monster->posX++;
-                        }/*else{ // Joueur ou monstre dessus
-                            // TODO : attaquer() l'entité sur la case
-                        }*/
+                        }
                     }
                 }
                 break;
@@ -562,9 +555,7 @@ void monsterMove(completeMap* m, monstre* monster){
                             m->map->list_case[monster->posX][monster->posY].monstre = NULL;
                             m->map->list_case[monster->posX-1][monster->posY].monstre = monster;
                             monster->posX--;
-                        }/*else{ // Joueur ou monstre dessus
-                            // TODO : attaquer() l'entité sur la case
-                        }*/
+                        }
                     }
                 }
                 break;

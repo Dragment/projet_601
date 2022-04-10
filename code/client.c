@@ -190,7 +190,7 @@ void* actualisationMap(void* arg){
         requete.map_y = *args->map_y;
         requete.commande = ACTUALISER;
 
-        //Envoie requete
+        //Envoi requete
         if(write(args->socket, &requete, sizeof(requete))== -1) {
             perror("Erreur lors de l'envoi TCP ");
             exit(EXIT_FAILURE);
@@ -368,7 +368,7 @@ int lancerJeu(int socket, char* nomJoueur){
             }
 
         }
-        //Envoie requete
+        //Envoi requete
         if(write(socket, &requete, sizeof(requete))== -1) {
             perror("Erreur lors de l'envoi TCP ");
             exit(EXIT_FAILURE);

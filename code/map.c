@@ -30,7 +30,7 @@ int creation_fichier(int nb, int* fd){
 }
 
 int enregistrer_map(map* map){
-    int fd = 0; // 0 Pour supprimer l'erreur de non initialisé alors que c'est initialisé via la fonction creation_fichier()
+    int fd = 0; // 0 Pour supprimer l'erreur de non initialisée alors que c'est initialisé via la fonction creation_fichier()
     
     // Choix du nom de sauvegarde
     int nb = 0;

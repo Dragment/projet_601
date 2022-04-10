@@ -71,7 +71,7 @@ void ajouter_monstre(completeMap* m, monstre* monstre);
 void ajouter_artefact(completeMap* m, artefact* a);
 void ajouter_joueur(completeMap* m, player* p);
 // Supprimer item
-void supprimer_artefact_complete_map(completeMap* m, artefact* a);
+void supprimer_artefact_complete_map(completeMap*m, artefact* a);
 void supprimer_monstre_complete_map(completeMap* m, monstre* mon);
 void supprimer_player_complete_map(completeMap* m, player* p);
 // Supprimer les listes

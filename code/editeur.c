@@ -354,9 +354,9 @@ int creer_carte(){
     // Remplir la map d'herbe
     remplir_herbe(carte);
 
-    // Tant que q n'est pas apppuyé, on attends une saisie
+    // Tant que q n'est pas appuyé, on attends une saisie
     while((ch = getch()) != 'q') {
-        // Si c'est un click souris
+        // Si c'est un clic souris
         if(ch==KEY_MOUSE){
             if(souris_getpos(&x, &y) == OK){
                 // Dans la fenetre outils
@@ -457,7 +457,7 @@ int editer_carte(){
     char* background = ""; 
     char* item = "";
 
-    //Definide des couleurs à placer dans la map
+    //Definir des couleurs à placer dans la map
     init_pair(100, COLOR_WHITE, COLOR_GREEN);
     init_pair(101, COLOR_WHITE, COLOR_YELLOW);
     init_pair(102, COLOR_WHITE, COLOR_BLUE);

@@ -45,9 +45,9 @@ void* player_thread(void* arg){
     trouver_lieu_spawn(&worldMap, &spawn_x, &spawn_y);
     player* p = initNewPlayer(buffer, spawn_x, spawn_y);
     printf("Connexion de %s\n", p->nom);
-    // Ajouter le joueur a la liste des joueurs de la map 0, 0
+    // Ajouter le joueur à la liste des joueurs de la map (0, 0)
     ajouter_joueur(worldMap.tete, p);
-    // Ajouter le player a la case (la place lui est réservée dans trouver_lieu_spawn)
+    // Ajouter le player à la case (la place lui est réservée dans trouver_lieu_spawn)
     worldMap.tete->map->list_case[spawn_x][spawn_y].player = p;
 
     // Déclaration variables
@@ -106,7 +106,7 @@ void* player_thread(void* arg){
                 playerMove(&worldMap, get_or_create_complete_map(&worldMap, player_map_x, player_map_y), p, 'L', &player_map_x, &player_map_y);
                 break;
             case ' ':
-                /* code */ // TODO: Pièce du grand tout
+                /* code */ // Pièce du grand tout => non fait
                 break;
             default:
                 
