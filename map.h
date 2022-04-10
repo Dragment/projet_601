@@ -14,6 +14,9 @@
 #define MAP_SAND 3
 #define MAP_WATER 4
 
+#define ELEMENT 0
+#define BACKGROUND 1
+
 #include "player.h"
 #include "artefact.h"
 #include "monstre.h"
@@ -37,5 +40,9 @@ int creation_fichier(int, int*);
 int enregistrer_map(map*);
 int charger_map(map*, int);
 int enregistrer_edit_map(map*, int);
+char typeCase(map*, int, int);
+int typeCaseDecompression(char, int);
+char* compresserMap(map*);
+void decompresserMap(char*, map*);
 
 #endif

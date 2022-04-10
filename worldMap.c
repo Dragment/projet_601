@@ -278,7 +278,7 @@ void monsterMove(completeMap* m, monstre* monster){
         switch(cas){
             // TODO : si case avec joueur ou monstre => attaque
             // TODO : faire attention à l'activation des pièces du Grand-Tout
-            case 0:     // UP => Il faut que le monstre soit à y = 18 au maximum (sinon il sort du tableau de positions)
+            case 0:     // UP => Il faut que le monstre soit à y = 0 au minimum (sinon il sort du tableau de positions)
                 // Case dans la map
                 if (monster->posY - 1 >= 0){
                     // Case disponible
@@ -298,7 +298,7 @@ void monsterMove(completeMap* m, monstre* monster){
                     }
                 }
                 break;
-            case 1:     // DOWN => Il faut que le monstre soit à y = 1 au minimum (sinon il sort du tableau de positions)
+            case 1:     // DOWN => Il faut que le monstre soit à y = 19 au maximum (sinon il sort du tableau de positions)
                 // Case dans la map
                 if (monster->posY + 1 < 20){
                     // Case disponible
@@ -318,9 +318,9 @@ void monsterMove(completeMap* m, monstre* monster){
                     }
                 }
                 break;
-            case 2:     // RIGHT => Il faut que le monstre soit à x = 38 au maximum (sinon il sort du tableau de positions)
+            case 2:     // RIGHT => Il faut que le monstre soit à x = 39 au maximum (sinon il sort du tableau de positions)
                 // Case dans la map
-                if (monster->posX + 1 < 39){
+                if (monster->posX + 1 < 40){
                     // Case disponible
                     if (m->map->list_case[monster->posX+1][monster->posY].background != MAP_WATER 
                     && m->map->list_case[monster->posX+1][monster->posY].element != MAP_OBSTACLE
@@ -338,7 +338,7 @@ void monsterMove(completeMap* m, monstre* monster){
                     }
                 }
                 break;
-            case 3:     // LEFT => Il faut que le monstre soit à x = 1 au minimum (sinon il sort du tableau de positions)
+            case 3:     // LEFT => Il faut que le monstre soit à x = 0 au minimum (sinon il sort du tableau de positions)
                 // Case dans la map
                 if (monster->posX - 1 > 0){
                     // Case disponible
